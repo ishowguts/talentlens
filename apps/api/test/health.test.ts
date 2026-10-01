@@ -37,3 +37,16 @@ describe('unmatched routes', () => {
     expect(res.body.requestId).toBe(res.headers['x-request-id']);
   });
 });
+
+describe('GET /api/health with the database unreachable', () => {
+  it('still answers 200 but reports the database as down', async () => {
+    const broken = createTestApp();
+    await broken.close();
+
+    const res = await request(broken.app).get('/api/health');
+
+    expect(res.status).toBe(200);
+    expect(res.body.db).toBe('down');
+    expect(res.body.jobs).toBe(0);
+  });
+});

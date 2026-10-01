@@ -1,6 +1,6 @@
 # TalentLens — State
 
-Last updated: 2026-10-02 · Phase: **Day 7 — Prove it, ship it** · Next task: **T25** (owner's order: T01–T14, T19, T15–T18, T21, T22, T24, T25, T20 last)
+Last updated: 2026-10-02 · Phase: **Day 7 — Prove it, ship it** · Next task: **T24** (blocked on the owner) · T20, T21, T23 done (owner's order: T01–T14, T19, T15–T18, T21, T22, T24, T25, T20 last)
 
 Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-DD, <commit>)`
 
@@ -25,12 +25,12 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T17 | Job detail | done (2026-10-02, 2ec76ca) |
 | T18 | Resume upload UI | done (2026-10-02, 7d4a2ab) |
 | T19 | Resume match endpoint | done (2026-10-02, 13a1d8b) |
-| T20 | Job ad scorer endpoint | todo |
-| T21 | Match + scorer UI | in-progress (match UI done f038a32; /score page waits on T20) |
+| T20 | Job ad scorer endpoint | done (2026-10-02, 5bc3e70) |
+| T21 | Match + scorer UI | done (2026-10-02, 5bc3e70) |
 | T22 | Evaluation tooling | done (2026-10-02, 71d3289) · Recall/MRR await the owner labeling the 50 queries |
-| T23 | Test coverage pass | todo |
+| T23 | Test coverage pass | done (2026-10-02, pending) |
 | T24 | Deploy | blocked (needs the owner: Neon, Render and Vercel accounts and their credentials) |
-| T25 | README | todo |
+| T25 | README | done (2026-10-02, a185bd2) · the live link and the demo GIF wait on T24 |
 
 ## Measurements
 
@@ -44,6 +44,7 @@ Only measured values, each with the command that produced it and the commit.
 | Recall@10 keyword / vector / hybrid | — (needs the owner to label `eval/queries.jsonl`) | `pnpm --filter eval label` then `pnpm eval` | |
 | MRR@10 keyword / vector / hybrid | — (needs the owner to label `eval/queries.jsonl`) | `pnpm --filter eval label` then `pnpm eval` | |
 | p50 latency keyword / vector / hybrid | 1.3 ms / 8.7 ms / 14.4 ms (means 2.4 / 10.3 / 20.6 ms; 50 queries, 7,141 jobs, warm, local Docker Postgres) | `pnpm eval` | 71d3289 |
+| Endpoint tests | 131 tests, 16 files, all green | `pnpm test` | pending |
 | Resume match latency, with rerank | 7.5 s end to end (PDF upload, 10 results, gemini-2.5-flash, thinking off) | `curl -X POST /api/match -F file=@apps/api/test/fixtures/resume.pdf` | f038a32 |
 
 ## Live URLs
