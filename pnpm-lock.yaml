@@ -307,7 +307,33 @@ importers:
         specifier: ^5.6.2
         version: 5.9.3
 
-  eval: {}
+  eval:
+    dependencies:
+      api:
+        specifier: workspace:*
+        version: link:../apps/api
+      db:
+        specifier: workspace:*
+        version: link:../packages/db
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.6.1
+      drizzle-orm:
+        specifier: ^0.44.2
+        version: 0.44.7(@types/pg@8.23.1)(pg@8.23.1)
+      shared:
+        specifier: workspace:*
+        version: link:../packages/shared
+    devDependencies:
+      '@types/node':
+        specifier: ^20.16.11
+        version: 20.19.43
+      tsx:
+        specifier: ^4.19.1
+        version: 4.23.15
+      typescript:
+        specifier: ^5.6.2
+        version: 5.9.3
 
   packages/db:
     dependencies:

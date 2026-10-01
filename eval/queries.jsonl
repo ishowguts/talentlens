@@ -1,0 +1,50 @@
+{"id": "q01", "group": "title", "query": "senior react developer", "relevant": []}
+{"id": "q02", "group": "title", "query": "frontend engineer", "relevant": []}
+{"id": "q03", "group": "title", "query": "backend engineer", "relevant": []}
+{"id": "q04", "group": "title", "query": "full stack developer", "relevant": []}
+{"id": "q05", "group": "title", "query": "python developer", "relevant": []}
+{"id": "q06", "group": "title", "query": "java developer", "relevant": []}
+{"id": "q07", "group": "title", "query": "data engineer", "relevant": []}
+{"id": "q08", "group": "title", "query": "data scientist", "relevant": []}
+{"id": "q09", "group": "title", "query": "machine learning engineer", "relevant": []}
+{"id": "q10", "group": "title", "query": "devops engineer", "relevant": []}
+{"id": "q11", "group": "title", "query": "site reliability engineer", "relevant": []}
+{"id": "q12", "group": "title", "query": "platform engineer", "relevant": []}
+{"id": "q13", "group": "title", "query": "security engineer", "relevant": []}
+{"id": "q14", "group": "title", "query": "qa automation engineer", "relevant": []}
+{"id": "q15", "group": "title", "query": "android developer", "relevant": []}
+{"id": "q16", "group": "title", "query": "ios developer", "relevant": []}
+{"id": "q17", "group": "title", "query": "database administrator", "relevant": []}
+{"id": "q18", "group": "title", "query": "product manager", "relevant": []}
+{"id": "q19", "group": "title", "query": "ui ux designer", "relevant": []}
+{"id": "q20", "group": "title", "query": "cloud engineer", "relevant": []}
+{"id": "q21", "group": "skill", "query": "build data pipelines in python", "relevant": []}
+{"id": "q22", "group": "skill", "query": "write terraform and manage kubernetes clusters", "relevant": []}
+{"id": "q23", "group": "skill", "query": "design rest apis with node and postgres", "relevant": []}
+{"id": "q24", "group": "skill", "query": "train and deploy ranking models", "relevant": []}
+{"id": "q25", "group": "skill", "query": "improve search relevance with embeddings", "relevant": []}
+{"id": "q26", "group": "skill", "query": "write end to end tests with playwright", "relevant": []}
+{"id": "q27", "group": "skill", "query": "optimise sql queries and database performance", "relevant": []}
+{"id": "q28", "group": "skill", "query": "build a design system in figma and react", "relevant": []}
+{"id": "q29", "group": "skill", "query": "set up ci cd pipelines with github actions", "relevant": []}
+{"id": "q30", "group": "skill", "query": "work with kafka and streaming data", "relevant": []}
+{"id": "q31", "group": "skill", "query": "develop mobile apps for ios and android", "relevant": []}
+{"id": "q32", "group": "skill", "query": "secure payment systems and review code for vulnerabilities", "relevant": []}
+{"id": "q33", "group": "skill", "query": "build dashboards and analytics models with dbt", "relevant": []}
+{"id": "q34", "group": "skill", "query": "migrate a legacy frontend to typescript", "relevant": []}
+{"id": "q35", "group": "skill", "query": "run incident response and define service level objectives", "relevant": []}
+{"id": "q36", "group": "vague", "query": "frontend role that pays well, remote", "relevant": []}
+{"id": "q37", "group": "vague", "query": "entry level programming job no experience needed", "relevant": []}
+{"id": "q38", "group": "vague", "query": "job where i can work from anywhere in europe", "relevant": []}
+{"id": "q39", "group": "vague", "query": "something with ai that is not research", "relevant": []}
+{"id": "q40", "group": "vague", "query": "well paid remote job in india", "relevant": []}
+{"id": "q41", "group": "vague", "query": "role for someone who likes making things look good", "relevant": []}
+{"id": "q42", "group": "vague", "query": "work on infrastructure without being on call all the time", "relevant": []}
+{"id": "q43", "group": "vague", "query": "a job that uses both coding and talking to customers", "relevant": []}
+{"id": "q44", "group": "vague", "query": "team lead position for an experienced developer", "relevant": []}
+{"id": "q45", "group": "vague", "query": "contract work paid by the hour", "relevant": []}
+{"id": "q46", "group": "vague", "query": "graduate scheme at a big company", "relevant": []}
+{"id": "q47", "group": "vague", "query": "role involving large amounts of data and statistics", "relevant": []}
+{"id": "q48", "group": "vague", "query": "remote job in the united states over 150k", "relevant": []}
+{"id": "q49", "group": "vague", "query": "something creative but technical", "relevant": []}
+{"id": "q50", "group": "vague", "query": "job where i mostly write go", "relevant": []}
