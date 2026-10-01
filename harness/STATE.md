@@ -1,6 +1,6 @@
 # TalentLens — State
 
-Last updated: 2026-10-02 · Phase: **Day 1 — Foundation** · Next task: **T11**
+Last updated: 2026-10-02 · Phase: **Day 6 — LLM features** · Next task: **T19** (per the owner's order: T01–T14, T19, T15–T18, T21, T22, T24, T25, T20 last)
 
 Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-DD, <commit>)`
 
@@ -16,10 +16,10 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T08 | Normalize, dedupe, upsert, CLI | done (2026-10-02, d3ddf06) |
 | T09 | Embedding service | done (2026-10-02, e88ca1f) |
 | T10 | Embedding backfill with cache | done (2026-10-02, 8a44e54) |
-| T11 | Vector search endpoint | todo |
-| T12 | Keyword search | todo |
-| T13 | Hybrid RRF + pagination | todo |
-| T14 | Rate limits + search logs + click | todo |
+| T11 | Vector search endpoint | done (2026-10-02, d0716b6) |
+| T12 | Keyword search | done (2026-10-02, d07c44d) |
+| T13 | Hybrid RRF + pagination | done (2026-10-02, 0632125) |
+| T14 | Rate limits + search logs + click | done (2026-10-02, c81cc51) |
 | T15 | Web scaffold | todo |
 | T16 | Search page | todo |
 | T17 | Job detail | todo |

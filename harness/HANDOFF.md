@@ -7,28 +7,30 @@ continue from this file alone.
 ## Active session
 
 - Status: IN PROGRESS
-- Task: T10 Embedding backfill with cache
-- Doing now: the full backfill is running (`pnpm --filter api embed`, log in the scratchpad). The code and its
-  tests are committed (8a44e54); what is left is the measurement and the second-run check.
+- Task: T19 Resume match endpoint
+- Doing now: `POST /api/match` end to end (ARCHITECTURE §7.4): PDF text via `unpdf` or JSON text, resume hash
+  and reuse, chunked embedding, vector top 20, one LLM rerank call validated with zod, one retry, timeout, and
+  the deterministic fallback that returns the vector top 10 with `reranked: false`.
 - Done this session: T01 (99caed0), T02 (a3a9a51), T03 (faae2ce), T04 (cf40909), T05 (pushed; CI result not
-  verifiable here), T06 (7989c47), T07 (9f73fb0), T08 (d3ddf06), T09 (e88ca1f).
-- Next step: when the backfill finishes, confirm `select count(*) from job_embeddings` equals the job count, run
-  `pnpm --filter api embed` again and confirm `embedded=0`, record seconds per 1,000 jobs and the cache hit rate
-  in STATE Measurements, then start T11 (vector search endpoint).
+  verifiable here), T06 (7989c47), T07 (9f73fb0), T08 (d3ddf06), T09 (e88ca1f), T10 (8a44e54), T11 (d0716b6),
+  T12 (d07c44d), T13 (0632125), T14 (c81cc51).
+- Next step: build the LLM client behind an interface with a fake for tests, then the match service, then the
+  route; test valid output, invalid JSON then valid on retry, invalid twice (fallback), an invented job id,
+  a non-PDF upload (400) and an oversized upload (413).
 - Files in flight (uncommitted): none.
 - Open problems / gotchas:
-  - Embedding runs at roughly 155 s per 1,000 jobs on this machine (CPU, fp32), so a full 7,141-job backfill takes
-    about 18 minutes. It is resumable: re-running continues where it stopped, because pending work is selected by
-    content hash.
+  - Task order for this session is the owner's: T01–T14, T19, T15–T18, T21, T22, T24, T25, with T20 last.
+    T23 (test coverage pass) follows whatever remains.
   - T05 is `in-progress`: the workflow is pushed but neither `gh` nor a GitHub token is available here and the
     repository is private, so the run result could not be confirmed. The owner should check the Actions tab.
-  - Remotive's public feed returns only 16 jobs whatever `limit` is passed, so the corpus is effectively Adzuna
-    and only 77 rows are flagged remote.
+  - Search fuses in the API rather than in one SQL statement; ADR-011 explains why.
+  - Tests never download the embedding model: `apps/api/test/fakeEmbedder.ts` is a deterministic bag-of-words
+    embedder, and `globalSetup` migrates the test database and seeds 30 fixture jobs.
+  - Remotive's public feed returns only 16 jobs whatever `limit` is passed, so the corpus is effectively Adzuna.
   - Adzuna's free tier has a small daily quota; a full ingest is ~150 requests. Use `--limit` while developing.
   - Local Node is v25.7.0 while `.nvmrc` and CI pin 20 (ARCHITECTURE §3). CI is the source of truth.
   - `psql` is not installed locally. Use `docker compose exec -T db psql -U postgres -d talentlens`.
   - A filled `.env` already exists. Never overwrite, print or log it. Only `.env.example` carries placeholders.
-  - The model cache lives in `.cache/transformers` (git-ignored, cached in CI by `.github/workflows/ci.yml`).
 
 ## Session plan (whole project, in this order)
 
@@ -36,6 +38,8 @@ T01–T14, T19, T15–T18, T21, T22, T24, T25, then T20 and T23 if time allows.
 
 ## Log
 
+- 2026-10-02 · T11-T14 done (d0716b6, d07c44d, 0632125, c81cc51): all three search modes, RRF, rate limits, click logging. Next: T19.
+- 2026-10-02 · T10 done (8a44e54): 7,141 jobs embedded, 28.3 s per 1,000, second run embeds 0.
 - 2026-10-02 · T09 done (e88ca1f): embedding service; T10 code committed (8a44e54), full backfill running.
 - 2026-10-02 · T08 done (d3ddf06): ingestion CLI; 7,141 jobs in the local database, repeat run inserts 0. Next: T09.
 - 2026-10-02 · T06 (7989c47) and T07 done: Remotive and Adzuna clients with fixture tests. Next: T08.
