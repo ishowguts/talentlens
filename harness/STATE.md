@@ -1,6 +1,6 @@
 # TalentLens — State
 
-Last updated: 2026-10-02 · Phase: **Day 1 — Foundation** · Next task: **T08**
+Last updated: 2026-10-02 · Phase: **Day 1 — Foundation** · Next task: **T09**
 
 Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-DD, <commit>)`
 
@@ -13,7 +13,7 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T05 | CI | in-progress (pushed; run result needs GitHub auth to verify) |
 | T06 | Remotive client | done (2026-10-02, 7989c47) |
 | T07 | Adzuna client | done (2026-10-02, 9f73fb0) |
-| T08 | Normalize, dedupe, upsert, CLI | todo |
+| T08 | Normalize, dedupe, upsert, CLI | done (2026-10-02, d3ddf06) |
 | T09 | Embedding service | todo |
 | T10 | Embedding backfill with cache | todo |
 | T11 | Vector search endpoint | todo |
@@ -38,7 +38,7 @@ Only measured values, each with the command that produced it and the commit.
 
 | Metric | Value | Command | Commit |
 | --- | --- | --- | --- |
-| Jobs ingested | — | | |
+| Jobs ingested | 7,141 (adzuna 7,125 · remotive 16); 3,124 companies | `pnpm --filter api ingest` then `select count(*) from jobs` | d3ddf06 |
 | Embedding cache hit rate on re-ingest | — | | |
 | Embedding time per 1,000 jobs | — | | |
 | Recall@10 keyword / vector / hybrid | — | | |
