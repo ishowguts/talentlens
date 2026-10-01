@@ -53,7 +53,7 @@ flowchart LR
 | Monorepo | pnpm workspaces |
 | Frontend | Next.js 14 App Router, React 18, Tailwind CSS |
 | Backend | Express 4, zod, pino + pino-http, express-rate-limit, multer, helmet, cors |
-| Database | PostgreSQL 16 + pgvector ≥ 0.8 (Docker locally, Neon in prod) |
+| Database | PostgreSQL 16 + pgvector ≥ 0.8 locally (Docker); Supabase (PostgreSQL 17, pgvector 0.8) in prod, see ADR-015 |
 | ORM / migrations | Drizzle ORM + drizzle-kit; migrations generated from the schema, with raw SQL statements added to a generated file when Drizzle cannot express something |
 | Embeddings | `Xenova/all-MiniLM-L6-v2` via `@huggingface/transformers` (Transformers.js), 384-d, mean pooling, L2-normalized, runs in-process |
 | LLM | Gemini via `@google/genai`, JSON response mode, output validated with zod |
@@ -326,14 +326,18 @@ same table. One LLM call returns `{ rewrittenTitle, notes[] }` (zod-validated); 
 
 ## 11. Deployment
 
-- **DB:** Neon, `CREATE EXTENSION vector;`, run migrations from CI or locally with the prod `DATABASE_URL`.
-- **API:** Render web service, defined by `render.yaml`: build `pnpm install --frozen-lockfile && pnpm --filter db
+- **DB:** Supabase, region `ap-northeast-1` (Tokyo), reached through the session pooler (ADR-015). Create the
+  `vector` and `pg_trgm` extensions **in `public`**, not in Supabase's `extensions` schema: `pg_dump` empties
+  `search_path` and schema-qualifies the type as `public.vector`, so a restore fails otherwise. Run migrations
+  from CI or locally with the prod `DATABASE_URL`.
+- **API:** Render web service in `singapore`, the closest region Render offers to the Tokyo database, defined by
+  `render.yaml`: build `pnpm install --frozen-lockfile && pnpm --filter db
   migrate`, start `pnpm --filter api start`, which runs the TypeScript entry point through `tsx` (ADR-013). The
   free instance sleeps when idle and has 512 MB RAM; the MiniLM model (~90 MB) fits. Health check `/api/health`.
 - **Web:** Vercel, root `apps/web`, `NEXT_PUBLIC_API_URL` = Render URL. API `CORS_ORIGINS` = Vercel URL.
-- **Ingestion in prod:** the first load copies the local database, embeddings included, straight into Neon with
+- **Ingestion in prod:** the first load copies the local database, embeddings included, straight into Supabase with
   `pg_dump | psql` (ADR-014), so the Adzuna trial quota is not spent twice. Later top-ups run locally against
-  Neon, or from a manual GitHub Actions workflow (`workflow_dispatch`) with secrets. No cron for the demo.
+  the production database, or from a manual GitHub Actions workflow (`workflow_dispatch`) with secrets. No cron for the demo.
 
 ## 12. Performance budgets (measure, record in STATE)
 

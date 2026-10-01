@@ -1,11 +1,12 @@
 # Render blueprint for the API. See docs/ARCHITECTURE.md section 11.
-# The database lives on Neon and the web app on Vercel; only the API runs here.
+# The database lives on Supabase (ap-northeast-1, Tokyo) and the web app on Vercel; only the API runs here.
+# The region below is the closest Render offers to the database: Oregon would add roughly 100 ms per query.
 services:
   - type: web
     name: talentlens-api
     runtime: node
     plan: free
-    region: oregon
+    region: singapore
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter db migrate
     startCommand: pnpm --filter api start
     healthCheckPath: /api/health

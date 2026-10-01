@@ -95,3 +95,15 @@ Append-only. Format: number, date, decision, why, consequences. To reverse one, 
   `drizzle` migration ledger, so `pnpm --filter db migrate` against Neon afterwards is a no-op. Re-running
   ingestion against Neon later is still supported and is the path once the key is no longer a trial.
 
+## ADR-015 · 2026-10-02 · Supabase in Tokyo for the production database, Render in Singapore for the API
+- Why: the owner provisioned the production database on Supabase (PostgreSQL 17.11, `ap-northeast-1`, session
+  pooler) rather than Neon, which ADR-002 and the original §11 assumed. Supabase offers pgvector 0.8 and a
+  session-mode pooler, so DDL, `COPY` and `SET LOCAL hnsw.*` all work exactly as they do locally; nothing in the
+  schema or the queries changes. The API is pinned to Render's `singapore` region because it is the closest to
+  Tokyo that Render offers: every search makes at least one database round trip, and running the API in Oregon
+  would add roughly 100 ms to each one.
+- Consequence: production runs PostgreSQL 17 while local development runs 16; both carry pgvector 0.8, and the
+  schema uses nothing version-specific. The `vector` and `pg_trgm` extensions must be created in `public`
+  (see §11). This supersedes the Neon half of ADR-002; the reason for choosing Postgres with pgvector over a
+  separate vector database is unchanged.
+

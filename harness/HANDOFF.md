@@ -19,7 +19,8 @@ continue from this file alone.
   `search_path` and schema-qualifies the `vector` type as `public.vector`; installing the extension in
   Supabase's usual `extensions` schema would have failed the restore.
 - Next step (T24), for whoever has the accounts:
-  1. Render: create the service from `render.yaml`. Set `DATABASE_URL` to the value of `DATABASE_URL_PROD`,
+  1. Render: create the service from `render.yaml` (region `singapore`, the closest to the Tokyo database).
+     Set `DATABASE_URL` to the value of `DATABASE_URL_PROD`,
      `CORS_ORIGINS` to the Vercel URL, plus `GEMINI_API_KEY` and `GEMINI_MODEL`. Health check `/api/health`
      should report `db: "ok"` and `jobs: 7141`.
   2. Vercel: import the repository, root directory `apps/web`, `NEXT_PUBLIC_API_URL` = the Render URL.
@@ -28,9 +29,8 @@ continue from this file alone.
 - Open problems / gotchas:
   - **Never print or log `DATABASE_URL_PROD`.** It stays in `.env` only. The copy was run by passing it to the
     container as `PG*` variables; the helper used for that lives in the session scratchpad, not in the repository.
-  - **Production carries three rows of local development noise**: 1 resume, 10 matches and 6 search_logs, copied
-    along with the corpus. They are the synthetic fixture resume and a few dev searches, not real user data.
-    `TRUNCATE matches, resumes, search_logs;` clears them whenever the owner wants a clean slate.
+  - Production started clean: `matches`, `resumes` and `search_logs` were truncated after the copy, so only the
+    corpus (7,141 jobs, 3,124 companies, 7,141 embeddings) is there.
   - When piping `pg_dump` into `psql` for this copy, the `PG*` variables address production, so they must be
     unset inside the subshell that runs `pg_dump` or it dumps production into production and silently copies
     nothing. That mistake happened once and was caught by the row-count check.
@@ -55,6 +55,7 @@ blocked on deployment credentials.
 
 ## Log
 
+- 2026-10-02 · production truncated to the corpus only; render.yaml moved to the singapore region and the Neon references in ARCHITECTURE replaced with Supabase (ADR-015). Ready for Render.
 - 2026-10-02 · production database loaded from the local container and verified row for row; Render and Vercel still outstanding.
 - 2026-10-02 · T05 confirmed green on GitHub; marked done (c72c4e9). T24 will load Neon from a pg_dump of the local database instead of re-ingesting (ADR-014); waiting for the Neon URL.
 - 2026-10-02 · T20, T21, T23 and T25 done (5bc3e70, e055972, a185bd2). Whole plan complete except T24, which needs Neon, Render and Vercel credentials. 131 tests green.
