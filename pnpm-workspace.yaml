@@ -6,3 +6,6 @@ packages:
 # esbuild ships a platform binary and needs its install script to run (tsx, drizzle-kit, vitest).
 allowBuilds:
   esbuild: true
+  onnxruntime-node: true
+  protobufjs: true
+  sharp: true

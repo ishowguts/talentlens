@@ -12,6 +12,7 @@
     "ingest": "tsx src/ingest/run.ts"
   },
   "dependencies": {
+    "@huggingface/transformers": "^3.3.1",
     "cors": "^2.8.5",
     "db": "workspace:*",
     "dotenv": "^16.4.5",

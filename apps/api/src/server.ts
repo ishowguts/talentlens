@@ -2,6 +2,7 @@
 import { createDb } from 'db';
 import { createApp } from './app.js';
 import { loadEnv } from './env.js';
+import { getEmbedder } from './services/embeddings.js';
 
 const env = loadEnv();
 const { db, close } = createDb(env.DATABASE_URL);
@@ -10,6 +11,12 @@ const app = createApp({ db, env });
 const server = app.listen(env.PORT, () => {
   console.log(`api: listening on http://localhost:${env.PORT}`);
 });
+
+// Load the embedding model now so the first search is not the one that pays for it (ARCHITECTURE 7.2).
+void getEmbedder(env.EMBEDDING_MODEL)
+  .warm()
+  .then(() => console.log(`api: embedding model ready (${env.EMBEDDING_MODEL})`))
+  .catch((error: unknown) => console.error('api: embedding model failed to load', error));
 
 async function shutdown(signal: string) {
   console.log(`api: ${signal} received, shutting down`);
