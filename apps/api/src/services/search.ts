@@ -102,6 +102,33 @@ export async function vectorCandidates(
   }));
 }
 
+/**
+ * Keyword candidates, best match first. `websearch_to_tsquery` gives users quoted phrases, OR and -term for
+ * free, and `ts_rank_cd` scores by term density and position.
+ */
+export async function keywordCandidates(
+  deps: SearchDeps,
+  queryText: string,
+  filters: SearchFilters,
+  limit = CANDIDATE_LIMIT,
+): Promise<SearchResult[]> {
+  const rows = await deps.db.execute<CandidateRow>(sql`
+    SELECT ${JOB_COLUMNS}, ts_rank_cd(j.search_tsv, websearch_to_tsquery('english', ${queryText})) AS rank
+    FROM jobs j
+    LEFT JOIN companies c ON c.id = j.company_id
+    WHERE j.search_tsv @@ websearch_to_tsquery('english', ${queryText})
+      AND ${filterClause(filters)}
+    ORDER BY rank DESC, j.posted_at DESC NULLS LAST
+    LIMIT ${limit}
+  `);
+
+  return rows.rows.map((row, index) => ({
+    job: toJobSummary(row),
+    score: Number(row.rank ?? 0),
+    ranks: { keyword: index + 1, vector: null },
+  }));
+}
+
 /** Record the search so result quality can be measured later (section 7.3). */
 async function logSearch(
   db: Database,
@@ -137,8 +164,11 @@ export async function search(deps: SearchDeps, query: SearchQuery): Promise<Sear
     case 'vector':
       candidates = await vectorCandidates(deps, query.q, filters);
       break;
+    case 'keyword':
+      candidates = await keywordCandidates(deps, query.q, filters);
+      break;
     default:
-      // Added in T12 (keyword) and T13 (hybrid).
+      // Added in T13.
       throw new Error(`search: mode "${query.mode}" is not implemented yet`);
   }
 
