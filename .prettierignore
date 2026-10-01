@@ -1,0 +1,10 @@
+node_modules
+dist
+build
+.next
+coverage
+pnpm-lock.yaml
+
+# Hand-maintained documents and the ownership guard are formatted by hand.
+*.md
+scripts/guard.mjs
