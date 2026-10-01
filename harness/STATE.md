@@ -28,7 +28,7 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T20 | Job ad scorer endpoint | done (2026-10-02, 5bc3e70) |
 | T21 | Match + scorer UI | done (2026-10-02, 5bc3e70) |
 | T22 | Evaluation tooling | done (2026-10-02, 71d3289) · Recall/MRR await the owner labeling the 50 queries |
-| T23 | Test coverage pass | done (2026-10-02, pending) |
+| T23 | Test coverage pass | done (2026-10-02, e055972) |
 | T24 | Deploy | blocked (needs the owner: Neon, Render and Vercel accounts and their credentials) |
 | T25 | README | done (2026-10-02, a185bd2) · the live link and the demo GIF wait on T24 |
 
@@ -44,7 +44,7 @@ Only measured values, each with the command that produced it and the commit.
 | Recall@10 keyword / vector / hybrid | — (needs the owner to label `eval/queries.jsonl`) | `pnpm --filter eval label` then `pnpm eval` | |
 | MRR@10 keyword / vector / hybrid | — (needs the owner to label `eval/queries.jsonl`) | `pnpm --filter eval label` then `pnpm eval` | |
 | p50 latency keyword / vector / hybrid | 1.3 ms / 8.7 ms / 14.4 ms (means 2.4 / 10.3 / 20.6 ms; 50 queries, 7,141 jobs, warm, local Docker Postgres) | `pnpm eval` | 71d3289 |
-| Endpoint tests | 131 tests, 16 files, all green | `pnpm test` | pending |
+| Endpoint tests | 131 tests, 16 files, all green | `pnpm test` | e055972 |
 | Resume match latency, with rerank | 7.5 s end to end (PDF upload, 10 results, gemini-2.5-flash, thinking off) | `curl -X POST /api/match -F file=@apps/api/test/fixtures/resume.pdf` | f038a32 |
 
 ## Live URLs
