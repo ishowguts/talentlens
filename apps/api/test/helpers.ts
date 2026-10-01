@@ -11,7 +11,7 @@ export function testDatabaseUrl(): string {
 }
 
 /** An app wired to the test database and the deterministic test embedder. Call `close()` when done. */
-export function createTestApp() {
+export function createTestApp(rateLimits?: { search?: number; match?: number; score?: number }) {
   const env = parseEnv({
     ...process.env,
     NODE_ENV: 'test',
@@ -19,5 +19,5 @@ export function createTestApp() {
     LOG_LEVEL: 'silent',
   });
   const { db, close } = createDb(env.DATABASE_URL);
-  return { app: createApp({ db, env, embedder: fakeEmbedder }), db, env, close };
+  return { app: createApp({ db, env, embedder: fakeEmbedder, rateLimits }), db, env, close };
 }
