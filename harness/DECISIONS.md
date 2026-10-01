@@ -1,0 +1,41 @@
+# TalentLens — Decisions (ADR log)
+
+Append-only. Format: number, date, decision, why, consequences. To reverse one, add a new ADR that supersedes it.
+
+## ADR-001 · 2026-10-02 · Separate Express API instead of Next.js API routes
+- Why: the backend must stand alone as a Node.js + Express REST service (ingestion CLI, long-lived embedding model
+  in memory, rate limiting, its own deploy). Next.js route handlers are serverless-shaped and would reload the model.
+- Consequence: two deploys (Vercel + Render) and CORS configuration.
+
+## ADR-002 · 2026-10-02 · PostgreSQL + pgvector, not a separate vector database
+- Why: one store for relational filters, full-text search and vectors; hybrid search is a single SQL query; filters
+  and joins stay transactional. At 5k–100k jobs pgvector HNSW is more than fast enough.
+- Consequence: scaling past millions of vectors needs the plan in ARCHITECTURE §13.
+
+## ADR-003 · 2026-10-02 · Drizzle ORM over Prisma
+- Why: first-class raw SQL for the RRF query, generated columns and pgvector operators; no query engine binary;
+  schema in TypeScript.
+- Consequence: HNSW index and `search_tsv` live in a hand-written SQL migration.
+
+## ADR-004 · 2026-10-02 · Local MiniLM embeddings (384-d) via Transformers.js
+- Why: no rate limits or cost during ingestion of thousands of jobs, deterministic in tests, small enough for a
+  512 MB instance. 384 dims keep the HNSW index small.
+- Trade-off: lower quality than large hosted embedding models and a 256-token input limit (mitigated by
+  title-first job text and chunked resume embeddings). Behind the `Embedder` interface, so it can be swapped.
+
+## ADR-005 · 2026-10-02 · HNSW over exact search and IVFFlat
+- Why: good recall without a training step, handles inserts without rebuilds; IVFFlat needs data before building
+  lists. Exact search is the recall baseline used in evaluation if needed.
+- Trade-off: approximate results and more memory; tuned with `m=16, ef_construction=64, ef_search=100`.
+
+## ADR-006 · 2026-10-02 · Reciprocal Rank Fusion (k = 60) for hybrid
+- Why: keyword and vector scores are on different scales; RRF uses only ranks, needs no tuning or normalization,
+  and is robust. Keyword catches exact titles and acronyms; vectors catch synonyms and intent.
+
+## ADR-007 · 2026-10-02 · Deterministic job-ad score, LLM only for suggestions
+- Why: a score must be explainable and testable; the model only writes the title rewrite and notes, and its failure
+  never changes the score.
+
+## ADR-008 · 2026-10-02 · LLM output is untrusted input
+- Why: models return invalid JSON or invented ids. Every response is zod-validated, ids are checked against what was
+  sent, one retry with the error, then a deterministic fallback. No endpoint fails because of the model.
