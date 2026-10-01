@@ -327,8 +327,9 @@ same table. One LLM call returns `{ rewrittenTitle, notes[] }` (zod-validated); 
 ## 11. Deployment
 
 - **DB:** Neon, `CREATE EXTENSION vector;`, run migrations from CI or locally with the prod `DATABASE_URL`.
-- **API:** Render web service, `pnpm --filter api build && node apps/api/dist/server.js`. The free instance sleeps
-  when idle and has 512 MB RAM; the MiniLM model (~90 MB) fits. Health check `/api/health`.
+- **API:** Render web service, defined by `render.yaml`: build `pnpm install --frozen-lockfile && pnpm --filter db
+  migrate`, start `pnpm --filter api start`, which runs the TypeScript entry point through `tsx` (ADR-013). The
+  free instance sleeps when idle and has 512 MB RAM; the MiniLM model (~90 MB) fits. Health check `/api/health`.
 - **Web:** Vercel, root `apps/web`, `NEXT_PUBLIC_API_URL` = Render URL. API `CORS_ORIGINS` = Vercel URL.
 - **Ingestion in prod:** run locally against Neon, or a manual GitHub Actions workflow (`workflow_dispatch`) with
   secrets. No cron needed for the demo.

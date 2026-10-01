@@ -74,3 +74,15 @@ Append-only. Format: number, date, decision, why, consequences. To reverse one, 
 - Consequence: ranking quality depends on the model's direct answer. If a future task needs deliberation, raise
   `LLM_TIMEOUT_MS` in the same change rather than removing the fallback, which ADR-008 requires.
 
+## ADR-013 · 2026-10-02 · The API runs its TypeScript entry point through tsx in production
+- Why: `apps/api` imports the workspace packages `db` and `shared`, whose `exports` point at TypeScript source so
+  development and the test suite need no build step. Emitting `apps/api/dist` with `tsc` therefore produces files
+  that still import `db` and `shared` as bare specifiers resolving to `.ts`, so `node dist/server.js` cannot
+  start. The alternatives were to give every workspace package a dist build with dual exports (two resolution
+  paths, stale-build risk in tests) or to bundle the API (an esbuild config plus an external list for the native
+  onnxruntime and sharp binaries). Running `tsx src/server.ts` costs a few hundred milliseconds at boot, needs no
+  build artefacts, and keeps one resolution path everywhere.
+- Consequence: `tsx` is a runtime dependency of `apps/api`, not a dev dependency, and `apps/api` has no `build`
+  script. If boot time or memory on the free Render instance ever matters, bundling with esbuild is the next step
+  and supersedes this ADR.
+

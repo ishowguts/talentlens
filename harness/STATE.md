@@ -1,6 +1,6 @@
 # TalentLens — State
 
-Last updated: 2026-10-02 · Phase: **Day 7 — Prove it, ship it** · Next task: **T24** (owner's order: T01–T14, T19, T15–T18, T21, T22, T24, T25, T20 last)
+Last updated: 2026-10-02 · Phase: **Day 7 — Prove it, ship it** · Next task: **T25** (owner's order: T01–T14, T19, T15–T18, T21, T22, T24, T25, T20 last)
 
 Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-DD, <commit>)`
 
@@ -29,7 +29,7 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T21 | Match + scorer UI | in-progress (match UI done f038a32; /score page waits on T20) |
 | T22 | Evaluation tooling | done (2026-10-02, 71d3289) · Recall/MRR await the owner labeling the 50 queries |
 | T23 | Test coverage pass | todo |
-| T24 | Deploy | todo |
+| T24 | Deploy | blocked (needs the owner: Neon, Render and Vercel accounts and their credentials) |
 | T25 | README | todo |
 
 ## Measurements

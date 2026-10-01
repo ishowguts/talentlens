@@ -1,0 +1,28 @@
+# Render blueprint for the API. See docs/ARCHITECTURE.md section 11.
+# The database lives on Neon and the web app on Vercel; only the API runs here.
+services:
+  - type: web
+    name: talentlens-api
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter db migrate
+    startCommand: pnpm --filter api start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: '20'
+      - key: NODE_ENV
+        value: production
+      # Set in the Render dashboard, never in this file.
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        sync: false
+      - key: LOG_LEVEL
+        value: info
