@@ -21,11 +21,12 @@ function decodeEntities(input: string): string {
     .replace(/&#(\d+);/g, (_m, code: string) => String.fromCodePoint(Number(code)));
 }
 
-/** Collapse all runs of whitespace to single spaces and trim. */
+/** Collapse runs of whitespace, keep single newlines and at most one blank line, and trim. */
 export function collapseWhitespace(input: string): string {
   return input
-    .replace(/[\t\f\v ]+/g, ' ')
-    .replace(/\s*\n\s*/g, '\n')
+    .replace(/\r\n?/g, '\n')
+    .replace(/[^\S\n]+/g, ' ')
+    .replace(/ *\n */g, '\n')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
@@ -40,7 +41,7 @@ export function stripHtml(input: string): string {
     .replace(/<!--[\s\S]*?-->/g, ' ')
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<li\b[^>]*>/gi, '\n- ')
-    .replace(/<\/(p|div|li|ul|ol|h[1-6]|tr|table|section|article|blockquote)>/gi, '\n')
+    .replace(/<\/(p|div|ul|ol|h[1-6]|tr|table|section|article|blockquote)>/gi, '\n')
     .replace(/<[^>]+>/g, ' ')
     // Adzuna truncates its descriptions mid-markup, so a trailing unterminated tag is normal.
     .replace(/<[^>]*$/, ' ');
