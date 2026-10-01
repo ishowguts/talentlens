@@ -1,5 +1,13 @@
 // Typed API client. Request and response shapes come from packages/shared, so the two apps cannot drift.
-import { jobSchema, searchResponseSchema, type Job, type SearchMode, type SearchResponse } from 'shared';
+import {
+  jobSchema,
+  matchResponseSchema,
+  searchResponseSchema,
+  type Job,
+  type MatchResponse,
+  type SearchMode,
+  type SearchResponse,
+} from 'shared';
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
 
@@ -60,6 +68,22 @@ export async function searchJobs(params: SearchParams): Promise<SearchResponse> 
 
 export async function getJob(id: number): Promise<Job> {
   return jobSchema.parse(await requestJson(`/jobs/${id}`));
+}
+
+/** Match a resume, sent either as a PDF file or as pasted text. */
+export async function matchResume(input: { file: File } | { text: string }): Promise<MatchResponse> {
+  if ('file' in input) {
+    const form = new FormData();
+    form.append('file', input.file);
+    return matchResponseSchema.parse(await requestJson('/match', { method: 'POST', body: form }));
+  }
+  return matchResponseSchema.parse(
+    await requestJson('/match', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ text: input.text }),
+    }),
+  );
 }
 
 /** Fire-and-forget: a failed click log must never break opening a job. */
