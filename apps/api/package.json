@@ -9,7 +9,8 @@
     "start": "node dist/server.js",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "ingest": "tsx src/ingest/run.ts"
+    "ingest": "tsx src/ingest/run.ts",
+    "embed": "tsx src/ingest/embedRun.ts"
   },
   "dependencies": {
     "@huggingface/transformers": "^3.3.1",
