@@ -1,6 +1,6 @@
 # TalentLens — State
 
-Last updated: 2026-10-02 · Phase: **Day 6 — LLM features** · Next task: **T19** (per the owner's order: T01–T14, T19, T15–T18, T21, T22, T24, T25, T20 last)
+Last updated: 2026-10-02 · Phase: **Day 7 — Prove it, ship it** · Next task: **T22** (owner's order: T01–T14, T19, T15–T18, T21, T22, T24, T25, T20 last)
 
 Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-DD, <commit>)`
 
@@ -20,13 +20,13 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T12 | Keyword search | done (2026-10-02, d07c44d) |
 | T13 | Hybrid RRF + pagination | done (2026-10-02, 0632125) |
 | T14 | Rate limits + search logs + click | done (2026-10-02, c81cc51) |
-| T15 | Web scaffold | todo |
-| T16 | Search page | todo |
-| T17 | Job detail | todo |
-| T18 | Resume upload UI | todo |
-| T19 | Resume match endpoint | todo |
+| T15 | Web scaffold | done (2026-10-02, 8d29f2c) |
+| T16 | Search page | done (2026-10-02, b855757) |
+| T17 | Job detail | done (2026-10-02, 2ec76ca) |
+| T18 | Resume upload UI | done (2026-10-02, 7d4a2ab) |
+| T19 | Resume match endpoint | done (2026-10-02, 13a1d8b) |
 | T20 | Job ad scorer endpoint | todo |
-| T21 | Match + scorer UI | todo |
+| T21 | Match + scorer UI | in-progress (match UI done f038a32; /score page waits on T20) |
 | T22 | Evaluation tooling | todo |
 | T23 | Test coverage pass | todo |
 | T24 | Deploy | todo |
@@ -44,6 +44,7 @@ Only measured values, each with the command that produced it and the commit.
 | Recall@10 keyword / vector / hybrid | — | | |
 | MRR@10 keyword / vector / hybrid | — | | |
 | p50 latency keyword / vector / hybrid | — | | |
+| Resume match latency, with rerank | 7.5 s end to end (PDF upload, 10 results, gemini-2.5-flash, thinking off) | `curl -X POST /api/match -F file=@apps/api/test/fixtures/resume.pdf` | f038a32 |
 
 ## Live URLs
 
