@@ -1,6 +1,7 @@
 import { createDb } from 'db';
 import { createApp } from '../src/app.js';
 import { parseEnv } from '../src/env.js';
+import { fakeEmbedder } from './fakeEmbedder.js';
 
 /** The test database connection string. Tests never touch the development database. */
 export function testDatabaseUrl(): string {
@@ -9,7 +10,7 @@ export function testDatabaseUrl(): string {
   return url;
 }
 
-/** An app wired to the test database, with logging off. Call `close()` when done. */
+/** An app wired to the test database and the deterministic test embedder. Call `close()` when done. */
 export function createTestApp() {
   const env = parseEnv({
     ...process.env,
@@ -18,5 +19,5 @@ export function createTestApp() {
     LOG_LEVEL: 'silent',
   });
   const { db, close } = createDb(env.DATABASE_URL);
-  return { app: createApp({ db, env }), db, env, close };
+  return { app: createApp({ db, env, embedder: fakeEmbedder }), db, env, close };
 }

@@ -1,4 +1,6 @@
-// Contracts shared by the API and the web app. See docs/ARCHITECTURE.md §6.
+export * from './search.js';
+
+// Contracts shared by the API and the web app. See docs/ARCHITECTURE.md section 6.
 
 /** Error codes the API can return, with the HTTP status each one maps to. */
 export const ERROR_STATUS = {

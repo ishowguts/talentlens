@@ -9,6 +9,15 @@ import { jobEmbeddingText, type Embedder } from '../services/embeddings.js';
 /** Rows pulled from the database per pass. Embedding happens in batches of 32 inside the embedder. */
 const PAGE_SIZE = 256;
 
+interface PendingRow extends Record<string, unknown> {
+  id: string | number;
+  title: string;
+  company: string | null;
+  location: string | null;
+  description: string;
+  content_hash: string;
+}
+
 interface PendingJob {
   id: number;
   title: string;
@@ -20,14 +29,7 @@ interface PendingJob {
 
 /** Jobs that need a vector: none stored, a different content hash, or a different model. */
 async function selectPending(db: Database, model: string, pageSize: number): Promise<PendingJob[]> {
-  const rows = await db.execute<{
-    id: string | number;
-    title: string;
-    company: string | null;
-    location: string | null;
-    description: string;
-    content_hash: string;
-  }>(sql`
+  const rows = await db.execute<PendingRow>(sql`
     SELECT j.id, j.title, c.name AS company, j.location, j.description, j.content_hash
     FROM jobs j
     LEFT JOIN companies c ON c.id = j.company_id

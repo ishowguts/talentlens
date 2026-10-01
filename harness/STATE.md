@@ -1,6 +1,6 @@
 # TalentLens — State
 
-Last updated: 2026-10-02 · Phase: **Day 1 — Foundation** · Next task: **T10** (embedding backfill running)
+Last updated: 2026-10-02 · Phase: **Day 1 — Foundation** · Next task: **T11**
 
 Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-DD, <commit>)`
 
@@ -15,7 +15,7 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T07 | Adzuna client | done (2026-10-02, 9f73fb0) |
 | T08 | Normalize, dedupe, upsert, CLI | done (2026-10-02, d3ddf06) |
 | T09 | Embedding service | done (2026-10-02, e88ca1f) |
-| T10 | Embedding backfill with cache | in-progress (code committed 8a44e54; full backfill running) |
+| T10 | Embedding backfill with cache | done (2026-10-02, 8a44e54) |
 | T11 | Vector search endpoint | todo |
 | T12 | Keyword search | todo |
 | T13 | Hybrid RRF + pagination | todo |
@@ -39,8 +39,8 @@ Only measured values, each with the command that produced it and the commit.
 | Metric | Value | Command | Commit |
 | --- | --- | --- | --- |
 | Jobs ingested | 7,141 (adzuna 7,125 · remotive 16); 3,124 companies | `pnpm --filter api ingest` then `select count(*) from jobs` | d3ddf06 |
-| Embedding cache hit rate on re-ingest | — | | |
-| Embedding time per 1,000 jobs | — | | |
+| Embedding cache hit rate on re-ingest | 100% (7,141 of 7,141 skipped, 0 embedded) | `pnpm --filter api embed` run a second time | 8a44e54 |
+| Embedding time per 1,000 jobs | 28.3 s (7,109 jobs in 200.8 s; CPU, fp32, Apple silicon) | `pnpm --filter api embed` | 8a44e54 |
 | Recall@10 keyword / vector / hybrid | — | | |
 | MRR@10 keyword / vector / hybrid | — | | |
 | p50 latency keyword / vector / hybrid | — | | |
