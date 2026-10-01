@@ -75,6 +75,18 @@ export const searchResponseSchema = z.object({
 
 export type SearchResponse = z.infer<typeof searchResponseSchema>;
 
+export const statsSchema = z.object({
+  jobs: z.number(),
+  embedded: z.number(),
+  bySource: z.object({
+    remotive: z.number(),
+    adzuna: z.number(),
+  }),
+  lastIngestAt: z.string().nullable(),
+});
+
+export type Stats = z.infer<typeof statsSchema>;
+
 export const searchClickSchema = z.object({
   logId: z.number().int().positive(),
   jobId: z.number().int().positive(),

@@ -12,6 +12,7 @@ import { errorHandler, notFoundHandler } from './middleware/error.js';
 import { requestId } from './middleware/requestId.js';
 import { DEFAULT_RATE_LIMITS, type RateLimits } from './middleware/rateLimit.js';
 import { healthRouter } from './routes/health.js';
+import { jobsRouter } from './routes/jobs.js';
 import { matchRouter } from './routes/match.js';
 import { searchRouter } from './routes/search.js';
 
@@ -57,6 +58,7 @@ export function createApp({
   app.use(express.json({ limit: '1mb' }));
 
   app.use('/api', healthRouter(db, env));
+  app.use('/api', jobsRouter(db));
   app.use('/api', searchRouter({ db, embedder }, limits.search));
   app.use('/api', matchRouter({ db, embedder, llm, llmTimeoutMs: env.LLM_TIMEOUT_MS }, limits.match));
 
