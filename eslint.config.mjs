@@ -24,7 +24,8 @@ export default tseslint.config(
     rules: {
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/consistent-type-imports': 'error',
-      eqeqeq: ['error', 'always'],
+      // `== null` is the idiomatic null-or-undefined check; everything else must be strict.
+      eqeqeq: ['error', 'always', { null: 'ignore' }],
       'no-console': 'off',
     },
   },

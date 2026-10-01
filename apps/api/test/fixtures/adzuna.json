@@ -1,0 +1,67 @@
+{
+  "count": 11455,
+  "results": [
+    {
+      "id": "5905756786",
+      "title": "Software Engineer",
+      "description": "Job Title: Software Engineer Location: Various locations across the UK and Scotland hybrid – 1 day on site depending on business needs. We offer a range of hybrid and flexible working arrangements – please speak to your recruiter about the options for this particular role Salary: Up to £54,500 depending on skills and experience Who we are: Join BAE Systems and you’ll be part of something bigger. As a valued member of our global colleague network, you’ll bring your unique skills and perspectives…",
+      "redirect_url": "https://www.adzuna.co.uk/jobs/land/ad/5905756786?se=EP_BLN298RGscdTWYnyUfQ&utm_medium=api&utm_source=9a34df0c&v=CD70F43D790F978F659F55CD0BA960029A7C312E",
+      "created": "2026-10-01T15:11:49Z",
+      "salary_min": 55000.0,
+      "salary_max": 70000.0,
+      "salary_is_predicted": "0",
+      "location": {
+        "area": ["UK", "South West England", "Bristol", "Easton"],
+        "display_name": "Easton, Bristol"
+      },
+      "company": {
+        "display_name": "BAE Systems"
+      }
+    },
+    {
+      "id": "5905756801",
+      "title": "Software Engineer",
+      "description": "Job Title: Software Engineer Location: Various locations across the UK and Scotland hybrid – 1 day on site depending on business needs. We offer a range of hybrid and flexible working arrangements – please speak to your recruiter about the options for this particular role Salary: Up to £54,500 depending on skills and experience Who we are: Join BAE Systems and you’ll be part of something bigger. As a valued member of our global colleague network, you’ll bring your unique skills and perspectives…",
+      "redirect_url": "https://www.adzuna.co.uk/jobs/land/ad/5905756801?se=EP_BLN298RGscdTWYnyUfQ&utm_medium=api&utm_source=9a34df0c&v=7A1285CF91D054C61E8A9987BCCBA2400D39289B",
+      "created": "2026-10-01T15:11:49Z",
+      "salary_min": 52228.93,
+      "salary_max": 52228.93,
+      "salary_is_predicted": "1",
+      "location": {
+        "display_name": "Lossiemouth, Moray",
+        "area": ["UK", "Scotland", "Moray", "Lossiemouth"]
+      },
+      "company": {
+        "display_name": "BAE Systems"
+      }
+    },
+    {
+      "id": "5905756774",
+      "title": "Remote Backend Developer",
+      "description": "Job Title: Software Engineer Location: Various locations across the UK and Scotland hybrid – 1 day on site depending on business needs. We offer a range of hybrid and flexible working arrangements – please speak to your recruiter about the options for this particular role Salary: Up to £54,500 depending on skills and experience Who we are: Join BAE Systems and you’ll be part of something bigger. As a valued member of our global colleague network, you’ll bring your unique skills and perspectives…",
+      "redirect_url": "https://www.adzuna.co.uk/jobs/land/ad/5905756774?se=EP_BLN298RGscdTWYnyUfQ&utm_medium=api&utm_source=9a34df0c&v=D504FBA5F9C5D5B6F292C35EBE54DFF9D5D3EDB4",
+      "created": "2026-10-01T15:11:49Z",
+      "salary_is_predicted": "0",
+      "location": {
+        "display_name": "Mytchett, Camberley",
+        "area": ["UK", "South East England", "Surrey", "Camberley", "Mytchett"]
+      },
+      "company": {
+        "display_name": "BAE Systems"
+      }
+    },
+    {
+      "id": "900001",
+      "title": "No url",
+      "description": "x",
+      "company": {
+        "display_name": "Broken Co"
+      }
+    },
+    {
+      "id": "900002",
+      "description": "Missing title",
+      "redirect_url": "https://www.adzuna.co.uk/jobs/land/ad/900002"
+    }
+  ]
+}

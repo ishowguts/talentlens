@@ -48,3 +48,11 @@ Append-only. Format: number, date, decision, why, consequences. To reverse one, 
 - Consequence: `packages/db/src/schema.ts` is the only place a table is described. The one hand-added statement is
   `CREATE EXTENSION IF NOT EXISTS vector` at the top of the first migration, so a fresh database needs no manual
   setup step. Committed migrations are never edited; a change means a new generated migration.
+
+## ADR-010 · 2026-10-02 · Adzuna predicted salaries are dropped
+- Why: Adzuna marks many rows with `salary_is_predicted: "1"`, where `salary_min` and `salary_max` are its own
+  model's estimate rather than anything the advert says (they are usually identical). Storing them would make the
+  `salaryMin` filter and the job-ad scorer's `salary` check report figures the employer never published.
+- Consequence: fewer jobs carry a salary, so the `salaryMin` search filter matches a smaller set. Advertised
+  salaries (`salary_is_predicted: "0"`) are kept as annual figures in the country's currency.
+
