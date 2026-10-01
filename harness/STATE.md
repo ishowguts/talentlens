@@ -12,7 +12,7 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T04 | Express skeleton | done (2026-10-02, cf40909) |
 | T05 | CI | in-progress (pushed; run result needs GitHub auth to verify) |
 | T06 | Remotive client | done (2026-10-02, 7989c47) |
-| T07 | Adzuna client | done (2026-10-02, pending) |
+| T07 | Adzuna client | done (2026-10-02, 9f73fb0) |
 | T08 | Normalize, dedupe, upsert, CLI | todo |
 | T09 | Embedding service | todo |
 | T10 | Embedding backfill with cache | todo |
