@@ -29,7 +29,7 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T21 | Match + scorer UI | done (2026-10-02, 5bc3e70) |
 | T22 | Evaluation tooling | done (2026-10-02, 71d3289) · Recall/MRR await the owner labeling the 50 queries |
 | T23 | Test coverage pass | done (2026-10-02, e055972) |
-| T24 | Deploy | blocked (needs the owner: Neon, Render and Vercel accounts and their credentials) |
+| T24 | Deploy | in-progress (production database loaded and verified; Render and Vercel still need the owner) |
 | T25 | README | done (2026-10-02, a185bd2) · the live link and the demo GIF wait on T24 |
 
 ## Measurements
@@ -49,8 +49,13 @@ Only measured values, each with the command that produced it and the commit.
 
 ## Live URLs
 
-- Web: —
-- API: —
+- Web: — (Vercel not created yet)
+- API: — (Render not created yet)
+- Database: Supabase, PostgreSQL 17.11, ap-northeast-1 (Tokyo), session pooler. Loaded 2026-10-02 from the local
+  container with `pg_dump | psql` (ADR-014). The connection string lives only in `.env` as `DATABASE_URL_PROD`.
+  Verified against local: jobs 7,141, companies 3,124, job_embeddings 7,141 (384 dimensions), resumes 1,
+  matches 10, search_logs 6. All ten indexes present including `job_embeddings_hnsw` and `jobs_search_tsv_gin`,
+  `search_tsv` is `GENERATED ALWAYS`, and `pnpm --filter db migrate` against it is a no-op.
 
 ## Owner-only items
 
