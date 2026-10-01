@@ -6,41 +6,57 @@ continue from this file alone.
 
 ## Active session
 
-- Status: IN PROGRESS
-- Task: T22 Evaluation tooling
-- Doing now: `eval/` — `label.ts` (TREC-style pooling of the top 20 from each mode, shuffled, y/n prompts) and
-  `run.ts` (Recall@10, MRR@10 and mean latency per mode into `eval/results.md`), per ARCHITECTURE §8.
-  The 50 relevance judgements are the owner's work: agents build the tool and must not label or invent them.
-- Done this session: T01 (99caed0), T02 (a3a9a51), T03 (faae2ce), T04 (cf40909), T05 (pushed; unverified),
+- Status: BLOCKED (on T24 only; everything else in the plan is done)
+- Task: T24 Deploy
+- Doing now: nothing. T24 cannot proceed from this machine: it needs Neon, Render and Vercel accounts and their
+  credentials, which only the owner has.
+- Done this session: T01 (99caed0), T02 (a3a9a51), T03 (faae2ce), T04 (cf40909), T05 (pushed; result unverified),
   T06 (7989c47), T07 (9f73fb0), T08 (d3ddf06), T09 (e88ca1f), T10 (8a44e54), T11 (d0716b6), T12 (d07c44d),
   T13 (0632125), T14 (c81cc51), T19 (13a1d8b), T15 (8d29f2c), T16 (b855757), T17 (2ec76ca), T18 (7d4a2ab),
-  T21 match half (f038a32).
-- Next step: write `eval/queries.jsonl` with the 50 query strings only (no relevance lists), build the labeling
-  and scoring CLIs, confirm `pnpm eval` runs and reports "no labeled queries yet" cleanly, then commit and
-  start T24 (deploy).
-- Files in flight (uncommitted): none.
+  T20 + T21 (5bc3e70), T22 (71d3289), T23 (e055972), T25 (a185bd2).
+- Next step, for whoever has the credentials:
+  1. Neon: create the project, run `DATABASE_URL=<neon url> pnpm --filter db migrate`. The first migration
+     creates the `vector` extension itself.
+  2. Render: create the service from `render.yaml`, set `DATABASE_URL`, `CORS_ORIGINS` (the Vercel URL),
+     `GEMINI_API_KEY` and `GEMINI_MODEL` in the dashboard. Health check is `/api/health`.
+  3. Vercel: import the repository with root directory `apps/web` and `NEXT_PUBLIC_API_URL` = the Render URL.
+  4. Populate production: `DATABASE_URL=<neon url> pnpm --filter api ingest` then `... pnpm --filter api embed`.
+     Ingest is about 150 Adzuna requests and roughly 9 minutes; embedding is about 28 s per 1,000 jobs.
+  5. Record both URLs in STATE under Live URLs, then add the live link to the README (T25 is otherwise finished).
+- Files in flight (uncommitted): none. Working tree clean, everything pushed to `origin/main`.
 - Open problems / gotchas:
-  - T21 is `in-progress` on purpose: the match UI is done, the `/score` page is part of T20, which the owner put
-    last. Finish `/score` in the same change as T20.
-  - T05 is `in-progress`: the workflow is pushed but neither `gh` nor a GitHub token is available here and the
-    repository is private, so the run result could not be confirmed. The owner should check the Actions tab.
-  - Reranking needs thinking disabled to fit the 15 s timeout (ADR-012). Verified live: 7.5 s end to end,
-    fit scores and reasons returned.
-  - The `/match` page is a client component; its upload path was verified against the live API with curl, not
-    through a browser. A browser pass is worth doing before the demo.
+  - **T24 is blocked on credentials.** `render.yaml` is ready and `pnpm --filter api start` was verified locally.
+  - **T05 CI result is unverified.** The workflow is pushed, but this machine has no `gh` and no GitHub token and
+    the repository is private, so the run could not be read. Check the Actions tab; the same four commands
+    (`pnpm lint`, `pnpm typecheck`, `pnpm --filter db migrate --test`, `pnpm test`) are green locally.
+  - **Recall@10 and MRR@10 are unmeasured by design.** The 50 queries in `eval/queries.jsonl` have empty
+    `relevant` lists. Only the owner labels: `pnpm --filter eval label` (resumable, `--only-unlabeled` and
+    `--query q07` both work), then `pnpm eval`. Latency is already measured over all 50 queries.
+  - Remotive's public feed returns only 16 jobs whatever `limit` is passed, so the 7,141-job corpus is
+    effectively Adzuna, and only 77 rows are flagged remote.
+  - Adzuna's free tier has a small daily request quota. A full ingest is about 150 requests. Use `--limit`.
+  - Reranking needs model thinking disabled to fit the 15 s timeout (ADR-012).
   - Hybrid search never returns an empty list, because the vector leg always returns its nearest neighbours.
-    Only `mode=keyword` can come back empty.
-  - Dev servers currently running locally: `pnpm --filter api dev` (4000) and `pnpm --filter web dev` (3000).
+  - The `/match` and `/score` pages are client components. Their request paths were verified against the live API
+    with curl, not through a browser. A browser pass is worth doing before the demo.
+  - Dev servers may still be running from this session: `pnpm --filter api dev` (4000), `pnpm --filter web dev`
+    (3000). The Postgres container `talentlens-db` is up with the full corpus.
   - Local Node is v25.7.0 while `.nvmrc` and CI pin 20 (ARCHITECTURE §3). CI is the source of truth.
   - `psql` is not installed locally. Use `docker compose exec -T db psql -U postgres -d talentlens`.
-  - A filled `.env` already exists. Never overwrite, print or log it. Only `.env.example` carries placeholders.
+  - A filled `.env` exists and must never be overwritten, printed or logged. Only `.env.example` has placeholders.
+  - pnpm 12 gates package build scripts through `allowBuilds` in `pnpm-workspace.yaml`; `canvas` is denied on
+    purpose (pulled in by `unpdf`, not needed for text extraction).
+- Commands to verify: `pnpm lint && pnpm typecheck && pnpm test` (131 tests, 16 files, green)
 
 ## Session plan (whole project, in this order)
 
-T01–T14, T19, T15–T18, T21, T22, T24, T25, then T20 and T23 if time allows.
+T01–T14, T19, T15–T18, T21, T22, T24, T25, then T20 and T23. All of them are done except T24, which is
+blocked on deployment credentials.
 
 ## Log
 
+- 2026-10-02 · T20, T21, T23 and T25 done (5bc3e70, e055972, a185bd2). Whole plan complete except T24, which needs Neon, Render and Vercel credentials. 131 tests green.
+- 2026-10-02 · T22 done (71d3289): evaluation tooling; latency measured (p50 1.3/8.7/14.4 ms), recall awaits the owner's labels.
 - 2026-10-02 · T19, T15-T18 done and T21 match UI done (f038a32): API complete except the scorer; web search, job detail and match pages work against the live API. Next: T22.
 - 2026-10-02 · T11-T14 done (d0716b6, d07c44d, 0632125, c81cc51): all three search modes, RRF, rate limits, click logging. Next: T19.
 - 2026-10-02 · T10 done (8a44e54): 7,141 jobs embedded, 28.3 s per 1,000, second run embeds 0.
