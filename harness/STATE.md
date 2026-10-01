@@ -1,14 +1,14 @@
 # TalentLens — State
 
-Last updated: 2026-10-02 · Phase: **Day 1 — Foundation** · Next task: **T02**
+Last updated: 2026-10-02 · Phase: **Day 1 — Foundation** · Next task: **T04**
 
 Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-DD, <commit>)`
 
 | ID | Task | Status |
 | --- | --- | --- |
 | T01 | Monorepo scaffold | done (2026-10-02, 99caed0) |
-| T02 | Local Postgres | todo |
-| T03 | Schema + migrations | todo |
+| T02 | Local Postgres | done (2026-10-02, a3a9a51) |
+| T03 | Schema + migrations | done (2026-10-02, faae2ce) |
 | T04 | Express skeleton | todo |
 | T05 | CI | todo |
 | T06 | Remotive client | todo |
