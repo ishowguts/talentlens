@@ -6,46 +6,45 @@ continue from this file alone.
 
 ## Active session
 
-- Status: BLOCKED (on T24 only; everything else in the plan is done)
+- Status: BLOCKED (waiting for the owner's Neon connection URL)
 - Task: T24 Deploy
-- Doing now: nothing. T24 cannot proceed from this machine: it needs Neon, Render and Vercel accounts and their
-  credentials, which only the owner has.
-- Done this session: T01 (99caed0), T02 (a3a9a51), T03 (faae2ce), T04 (cf40909), T05 (pushed; result unverified),
-  T06 (7989c47), T07 (9f73fb0), T08 (d3ddf06), T09 (e88ca1f), T10 (8a44e54), T11 (d0716b6), T12 (d07c44d),
-  T13 (0632125), T14 (c81cc51), T19 (13a1d8b), T15 (8d29f2c), T16 (b855757), T17 (2ec76ca), T18 (7d4a2ab),
-  T20 + T21 (5bc3e70), T22 (71d3289), T23 (e055972), T25 (a185bd2).
-- Next step, for whoever has the credentials:
-  1. Neon: create the project, run `DATABASE_URL=<neon url> pnpm --filter db migrate`. The first migration
-     creates the `vector` extension itself.
-  2. Render: create the service from `render.yaml`, set `DATABASE_URL`, `CORS_ORIGINS` (the Vercel URL),
-     `GEMINI_API_KEY` and `GEMINI_MODEL` in the dashboard. Health check is `/api/health`.
-  3. Vercel: import the repository with root directory `apps/web` and `NEXT_PUBLIC_API_URL` = the Render URL.
-  4. Populate production: `DATABASE_URL=<neon url> pnpm --filter api ingest` then `... pnpm --filter api embed`.
-     Ingest is about 150 Adzuna requests and roughly 9 minutes; embedding is about 28 s per 1,000 jobs.
-  5. Record both URLs in STATE under Live URLs, then add the live link to the README (T25 is otherwise finished).
-- Files in flight (uncommitted): none. Working tree clean, everything pushed to `origin/main`.
+- Doing now: nothing. The next action needs the Neon URL, which the owner is sending.
+- Done this session: every task except T24. T05 is confirmed green on GitHub (ci and ownership-guard, at
+  c72c4e9). Commits: T01 99caed0, T02 a3a9a51, T03 faae2ce, T04 cf40909, T05 c72c4e9, T06 7989c47, T07 9f73fb0,
+  T08 d3ddf06, T09 e88ca1f, T10 8a44e54, T11 d0716b6, T12 d07c44d, T13 0632125, T14 c81cc51, T19 13a1d8b,
+  T15 8d29f2c, T16 b855757, T17 2ec76ca, T18 7d4a2ab, T20 + T21 5bc3e70, T22 71d3289, T23 e055972, T25 a185bd2.
+- Next step (T24), in this order:
+  1. **Copy the data, do not re-ingest.** The Adzuna key is a trial key and a full ingest costs about 150
+     requests, so production is loaded from the local database instead (ADR-014). With the Neon URL in
+     `$NEON_URL`, run it inside the container, which has both tools at the matching major version:
+     `docker compose exec -T db sh -c 'pg_dump --no-owner --no-privileges -U postgres -d talentlens | psql "$NEON"'`
+     with `-e NEON="$NEON_URL"`. If the `vector` extension cannot be created by the dump, create it on Neon
+     first (`CREATE EXTENSION vector;`) and re-run. The dump carries the `drizzle` ledger, so
+     `pnpm --filter db migrate` against Neon afterwards is a no-op; run it to confirm.
+  2. Verify on Neon: `select count(*) from jobs` = 7,141 and `select count(*) from job_embeddings` = 7,141.
+  3. Render: create the service from `render.yaml`, set `DATABASE_URL` (Neon), `CORS_ORIGINS` (the Vercel URL),
+     `GEMINI_API_KEY`, `GEMINI_MODEL`. Health check `/api/health`; expect `jobs: 7141`.
+  4. Vercel: import the repository, root directory `apps/web`, `NEXT_PUBLIC_API_URL` = the Render URL.
+  5. Record both URLs in STATE under Live URLs and add the live link to the README.
+- Files in flight (uncommitted): none. Working tree clean, everything pushed.
 - Open problems / gotchas:
-  - **T24 is blocked on credentials.** `render.yaml` is ready and `pnpm --filter api start` was verified locally.
-  - **T05 CI result is unverified.** The workflow is pushed, but this machine has no `gh` and no GitHub token and
-    the repository is private, so the run could not be read. Check the Actions tab; the same four commands
-    (`pnpm lint`, `pnpm typecheck`, `pnpm --filter db migrate --test`, `pnpm test`) are green locally.
+  - **Never print or log the Neon URL.** Keep it in an environment variable or the session scratchpad, never in a
+    tracked file, and never in a commit message.
   - **Recall@10 and MRR@10 are unmeasured by design.** The 50 queries in `eval/queries.jsonl` have empty
-    `relevant` lists. Only the owner labels: `pnpm --filter eval label` (resumable, `--only-unlabeled` and
+    `relevant` lists. Only the owner labels: `pnpm --filter eval label` (resumable; `--only-unlabeled` and
     `--query q07` both work), then `pnpm eval`. Latency is already measured over all 50 queries.
-  - Remotive's public feed returns only 16 jobs whatever `limit` is passed, so the 7,141-job corpus is
-    effectively Adzuna, and only 77 rows are flagged remote.
-  - Adzuna's free tier has a small daily request quota. A full ingest is about 150 requests. Use `--limit`.
+  - Remotive's public feed returns only 16 jobs whatever `limit` is passed, so the corpus is effectively Adzuna,
+    and only 77 rows are flagged remote.
   - Reranking needs model thinking disabled to fit the 15 s timeout (ADR-012).
   - Hybrid search never returns an empty list, because the vector leg always returns its nearest neighbours.
   - The `/match` and `/score` pages are client components. Their request paths were verified against the live API
     with curl, not through a browser. A browser pass is worth doing before the demo.
-  - Dev servers may still be running from this session: `pnpm --filter api dev` (4000), `pnpm --filter web dev`
-    (3000). The Postgres container `talentlens-db` is up with the full corpus.
+  - Dev servers may still be running from this session: api on 4000, web on 3000. The `talentlens-db` container is
+    up with the full corpus; the dump in step 1 reads from it, so leave it running.
   - Local Node is v25.7.0 while `.nvmrc` and CI pin 20 (ARCHITECTURE §3). CI is the source of truth.
-  - `psql` is not installed locally. Use `docker compose exec -T db psql -U postgres -d talentlens`.
+  - `psql` is not installed on the host. Use `docker compose exec -T db psql -U postgres -d talentlens`.
   - A filled `.env` exists and must never be overwritten, printed or logged. Only `.env.example` has placeholders.
-  - pnpm 12 gates package build scripts through `allowBuilds` in `pnpm-workspace.yaml`; `canvas` is denied on
-    purpose (pulled in by `unpdf`, not needed for text extraction).
+  - pnpm 12 gates build scripts through `allowBuilds` in `pnpm-workspace.yaml`; `canvas` is denied on purpose.
 - Commands to verify: `pnpm lint && pnpm typecheck && pnpm test` (131 tests, 16 files, green)
 
 ## Session plan (whole project, in this order)
@@ -55,6 +54,7 @@ blocked on deployment credentials.
 
 ## Log
 
+- 2026-10-02 · T05 confirmed green on GitHub; marked done (c72c4e9). T24 will load Neon from a pg_dump of the local database instead of re-ingesting (ADR-014); waiting for the Neon URL.
 - 2026-10-02 · T20, T21, T23 and T25 done (5bc3e70, e055972, a185bd2). Whole plan complete except T24, which needs Neon, Render and Vercel credentials. 131 tests green.
 - 2026-10-02 · T22 done (71d3289): evaluation tooling; latency measured (p50 1.3/8.7/14.4 ms), recall awaits the owner's labels.
 - 2026-10-02 · T19, T15-T18 done and T21 match UI done (f038a32): API complete except the scorer; web search, job detail and match pages work against the live API. Next: T22.

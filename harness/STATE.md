@@ -1,6 +1,6 @@
 # TalentLens — State
 
-Last updated: 2026-10-02 · Phase: **Day 7 — Prove it, ship it** · Next task: **T24** (blocked on the owner) · T20, T21, T23 done (owner's order: T01–T14, T19, T15–T18, T21, T22, T24, T25, T20 last)
+Last updated: 2026-10-02 · Phase: **Day 7 — Prove it, ship it** · Next task: **T24** (waiting for the Neon URL) · every other task is done (owner's order: T01–T14, T19, T15–T18, T21, T22, T24, T25, T20 last)
 
 Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-DD, <commit>)`
 
@@ -10,7 +10,7 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T02 | Local Postgres | done (2026-10-02, a3a9a51) |
 | T03 | Schema + migrations | done (2026-10-02, faae2ce) |
 | T04 | Express skeleton | done (2026-10-02, cf40909) |
-| T05 | CI | in-progress (pushed; run result needs GitHub auth to verify) |
+| T05 | CI | done (2026-10-02, c72c4e9) · ci and ownership-guard both green on GitHub |
 | T06 | Remotive client | done (2026-10-02, 7989c47) |
 | T07 | Adzuna client | done (2026-10-02, 9f73fb0) |
 | T08 | Normalize, dedupe, upsert, CLI | done (2026-10-02, d3ddf06) |

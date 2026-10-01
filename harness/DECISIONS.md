@@ -86,3 +86,12 @@ Append-only. Format: number, date, decision, why, consequences. To reverse one, 
   script. If boot time or memory on the free Render instance ever matters, bundling with esbuild is the next step
   and supersedes this ADR.
 
+## ADR-014 · 2026-10-02 · Production data is copied from the local database, not re-ingested
+- Why: a full ingest is about 150 Adzuna requests, and the key in use is a trial key with a small daily quota.
+  The local database already holds the measured corpus (7,141 jobs, all embedded) that the published numbers come
+  from. Copying it with `pg_dump | psql` spends no quota and makes production hold exactly the data the
+  README reports, instead of a second, slightly different crawl.
+- Consequence: the first production load is a manual copy, not a reproducible pipeline run. The dump carries the
+  `drizzle` migration ledger, so `pnpm --filter db migrate` against Neon afterwards is a no-op. Re-running
+  ingestion against Neon later is still supported and is the path once the key is no longer a trial.
+

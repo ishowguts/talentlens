@@ -331,8 +331,9 @@ same table. One LLM call returns `{ rewrittenTitle, notes[] }` (zod-validated); 
   migrate`, start `pnpm --filter api start`, which runs the TypeScript entry point through `tsx` (ADR-013). The
   free instance sleeps when idle and has 512 MB RAM; the MiniLM model (~90 MB) fits. Health check `/api/health`.
 - **Web:** Vercel, root `apps/web`, `NEXT_PUBLIC_API_URL` = Render URL. API `CORS_ORIGINS` = Vercel URL.
-- **Ingestion in prod:** run locally against Neon, or a manual GitHub Actions workflow (`workflow_dispatch`) with
-  secrets. No cron needed for the demo.
+- **Ingestion in prod:** the first load copies the local database, embeddings included, straight into Neon with
+  `pg_dump | psql` (ADR-014), so the Adzuna trial quota is not spent twice. Later top-ups run locally against
+  Neon, or from a manual GitHub Actions workflow (`workflow_dispatch`) with secrets. No cron for the demo.
 
 ## 12. Performance budgets (measure, record in STATE)
 
