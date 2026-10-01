@@ -1,6 +1,6 @@
 # TalentLens — State
 
-Last updated: 2026-10-02 · Phase: **Day 7 — Prove it, ship it** · Next task: **T22** (owner's order: T01–T14, T19, T15–T18, T21, T22, T24, T25, T20 last)
+Last updated: 2026-10-02 · Phase: **Day 7 — Prove it, ship it** · Next task: **T24** (owner's order: T01–T14, T19, T15–T18, T21, T22, T24, T25, T20 last)
 
 Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-DD, <commit>)`
 
@@ -27,7 +27,7 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T19 | Resume match endpoint | done (2026-10-02, 13a1d8b) |
 | T20 | Job ad scorer endpoint | todo |
 | T21 | Match + scorer UI | in-progress (match UI done f038a32; /score page waits on T20) |
-| T22 | Evaluation tooling | todo |
+| T22 | Evaluation tooling | done (2026-10-02, pending) · Recall/MRR await the owner labeling the 50 queries |
 | T23 | Test coverage pass | todo |
 | T24 | Deploy | todo |
 | T25 | README | todo |
@@ -41,9 +41,9 @@ Only measured values, each with the command that produced it and the commit.
 | Jobs ingested | 7,141 (adzuna 7,125 · remotive 16); 3,124 companies | `pnpm --filter api ingest` then `select count(*) from jobs` | d3ddf06 |
 | Embedding cache hit rate on re-ingest | 100% (7,141 of 7,141 skipped, 0 embedded) | `pnpm --filter api embed` run a second time | 8a44e54 |
 | Embedding time per 1,000 jobs | 28.3 s (7,109 jobs in 200.8 s; CPU, fp32, Apple silicon) | `pnpm --filter api embed` | 8a44e54 |
-| Recall@10 keyword / vector / hybrid | — | | |
-| MRR@10 keyword / vector / hybrid | — | | |
-| p50 latency keyword / vector / hybrid | — | | |
+| Recall@10 keyword / vector / hybrid | — (needs the owner to label `eval/queries.jsonl`) | `pnpm --filter eval label` then `pnpm eval` | |
+| MRR@10 keyword / vector / hybrid | — (needs the owner to label `eval/queries.jsonl`) | `pnpm --filter eval label` then `pnpm eval` | |
+| p50 latency keyword / vector / hybrid | 1.3 ms / 8.7 ms / 14.4 ms (means 2.4 / 10.3 / 20.6 ms; 50 queries, 7,141 jobs, warm, local Docker Postgres) | `pnpm eval` | pending |
 | Resume match latency, with rerank | 7.5 s end to end (PDF upload, 10 results, gemini-2.5-flash, thinking off) | `curl -X POST /api/match -F file=@apps/api/test/fixtures/resume.pdf` | f038a32 |
 
 ## Live URLs
