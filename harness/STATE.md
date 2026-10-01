@@ -1,6 +1,6 @@
 # TalentLens — State
 
-Last updated: 2026-10-02 · Phase: **Day 1 — Foundation** · Next task: **T05**
+Last updated: 2026-10-02 · Phase: **Day 1 — Foundation** · Next task: **T07**
 
 Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-DD, <commit>)`
 
@@ -10,8 +10,8 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T02 | Local Postgres | done (2026-10-02, a3a9a51) |
 | T03 | Schema + migrations | done (2026-10-02, faae2ce) |
 | T04 | Express skeleton | done (2026-10-02, cf40909) |
-| T05 | CI | todo |
-| T06 | Remotive client | todo |
+| T05 | CI | in-progress (pushed; run result needs GitHub auth to verify) |
+| T06 | Remotive client | done (2026-10-02, pending) |
 | T07 | Adzuna client | todo |
 | T08 | Normalize, dedupe, upsert, CLI | todo |
 | T09 | Embedding service | todo |

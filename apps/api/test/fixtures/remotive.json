@@ -1,0 +1,78 @@
+{
+  "0-legal-notice": "Remotive API. Jobs must link back to the original posting and credit Remotive.",
+  "job-count": 5,
+  "jobs": [
+    {
+      "id": 2091144,
+      "url": "https://remotive.com/remote-jobs/all-others/content-reviewer-united-states-2091144",
+      "title": "Content Reviewer - United States",
+      "company_name": "TELUS Digital",
+      "company_logo": "https://remotive.com/job/2091144/logo",
+      "category": "All others",
+      "tags": ["android", "ios", "social media", "AI/ML"],
+      "job_type": "part_time",
+      "publication_date": "2026-09-21T12:55:11",
+      "candidate_required_location": "USA",
+      "salary": "",
+      "description": "<p class=\"figma-padding-bottom-32 tw-border-b tw-border-[#E3E6E8]\" style=\"border-width: 0px 0px 1px; border-color: #e3e6e8; --tw-shadow: 0 0 #0000; --tw-ring-offset-width: 0px; --tw-ring-offset-color: #fff; --tw-ring-color: rgb(59 130 246 / .5); --tw-ring-offset-shadow: 0 0 #0000; --tw-ring-shadow: 0 0 #0000; --tw-border-spacing-x: 0; --tw-border-spacing-y: 0; --tw-translate-x: 0; --tw-translate-y: 0; --tw-rotate: 0; --tw-skew-x: 0; --tw-skew-y: 0; --tw-scale-x: 1; --tw-scale-y: 1; --tw-scroll-snap-strictness: proximity; --tw-shadow-colored: 0 0 #0000; --tw-border-opacity: 1; padding-bottom: 32px; color: #212529;\"> </p>\n<p class=\"ql-align-justify\" style=\"border-color: #e5e7eb; --tw-shadow: 0 0 #0000; --tw-ring-offset-width: 0px; --tw-ring-offset-color: #fff; --tw-ring-color: rgb(59 130 246 / .5); --tw-ring-offset-shadow: 0 0 #0000; --tw-ring-shadow: 0 0 #0000; --tw-border-spacing-x: 0; --tw-border-spacing-y: 0; --tw-translate-x: 0; --tw-translate-y: 0; --tw-rotate: 0; --tw-skew-x: 0; --tw-skew-y: 0; --tw-scale-x: 1; --tw-scale-y: 1; --tw-scroll-snap-strictness: proximity; --tw-shadow-colored: 0 0 #0000; cursor: text; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; text-align: justify;\"><span style=\"border-color: #e5e7eb; --tw-shadow: 0 0 #0000; --tw-ring-offset-width: 0px; --tw-ring-offset-color: #fff; --tw-ring-color: rgb(59 130 246 / .5); --tw-ring-offset-shadow: 0 0 #0000; --tw-ring-shadow: 0 0 #0000; --tw-border-spacing-x: 0; --tw-border-spacing-y: 0; --tw-translate-x: 0; --tw-translate-y: 0; --tw-rotate: 0; --tw-skew-x: 0; --tw-skew-y: 0; --tw-scale-x: 1; --tw-scale-y: 1; --tw-scroll-snap-strictness: proximity; --tw-shadow-colored: 0 0 #0000; background-color: transparent;\">We are looking for an independent, flexible, remote opportunity where you can help improve AI-powered search technology from the comfort of your home? If you're curious, internet-savvy, and enjoy evaluating online content, this freelance project could be a great fit.</span></p>\n<p style=\"border-color: #e5e7eb; --tw-shadow: 0 0 #0000; --tw-ring-offset-width: 0px; --tw-ring-offset-color: #fff; --tw-ring-color: rgb(59 130 246 / .5); --tw-ring-offset-shadow: 0 0 #0000; --tw-ring-shadow: 0 0 #0000; --tw-border-spacing-x: 0; --tw-border-spacing-y: 0; --tw-translate-x: 0; --tw-translate-y: 0; --tw-rotate: 0; --tw-skew-x: 0; --tw-skew-y: 0; --tw-scale-x: 1; --tw-scale-y: 1; --tw-scroll-snap-strictness: proximity; --tw-shadow-co"
+    },
+    {
+      "id": 2091141,
+      "url": "https://remotive.com/remote-jobs/design/frontend-web-application-developer-2091141",
+      "title": "Frontend Web Application Developer",
+      "company_name": "KoboToolbox",
+      "company_logo": "https://remotive.com/job/2091141/logo",
+      "category": "Design",
+      "tags": [
+        "api",
+        "django",
+        "docker",
+        "frontend",
+        "git",
+        "python",
+        "react",
+        "security",
+        "video",
+        "AI/ML",
+        "documentation",
+        "Typescript ",
+        "web applications",
+        "backbone",
+        "diversity",
+        "REST",
+        "insurance"
+      ],
+      "job_type": "full_time",
+      "publication_date": "2026-09-18T16:43:22",
+      "candidate_required_location": "USA, Canada, Argentina, Mexico, Peru",
+      "salary": "$90k - $105k",
+      "description": "<p><strong>Location:</strong> Remote<br><strong>Availability:</strong> 35-40 hours per week<br><strong>Working hours:</strong> US East business hours<br><strong>Reporting to:</strong> Lead developer</p>\n<p><a href=\"http://www.kobotoolbox.org/\" rel=\"nofollow\">KoboToolbox</a> has an immediate opening for a Frontend Web Application Developer to fill a full-time position of approximately 35-40 hours per week, for a commitment of at least 1 year. As a member of our team, you will share in the challenge and excitement of writing code used by over 32,000 organizations around the world. These organizations create data-driven change through the collection and analysis of more than 20 million surveys per month.</p>\n<p>Only candidates who already have experience working on large web applications will be considered. Beyond technical acumen, we are seeking a team member who demonstrates curiosity, initiative, and a cooperative approach to problem solving and decision-making.</p>\n<p>If you're passionate about leveraging technology to make a positive impact, we want to hear from you!</p>\n<p>Responsibilities</p>\n<ul style=\"\">\n<li style=\"\">Searching and reading an extensive, long-lived code base to understand existing behavior and conventions.</li>\n<li style=\"\">Recognizing when existing conventions may no longer be the best approach and suggesting improvements aligned with contemporary best practices.</li>\n<li style=\"\">Writing robust, concise, and reusable code with accompanying tests and documentation.</li>\n<li style=\"\">Reviewing other developers' code and providing constructive feedback.</li>\n<li style=\"\">Incorporating feedback from code reviews to improve your skills and align with team standards.</li>\n<li style=\"\">Using AI-assisted development tools effectively while maintaining responsibility for code quality and correctness.</li>\n<li style=\"\">Efficiently investigating bug reports from the support team, creating well-scoped fixes or actionable plans for resolution.</li>\n<li style=\"\">Scoping, prioritizing, estimating, and organizing work into manageably sized tasks.</li>\n<li style=\"\">Attending regular video-conference check-ins with other members of the technical team.</li>\n<li style=\"\">Communicating with the public in conjunction with our support staff or directly through forums, issue trackers, etc.</li>\n<li style=\"\">Contributing to discussions about design and architecture collaboratively with the larger team.</li>\n<li style=\"\">Performing other related duties as dir"
+    },
+    {
+      "id": 1919265,
+      "url": "https://remotive.com/remote-jobs/software-development/senior-independent-software-developer-1919265",
+      "title": "Senior Independent Software Developer",
+      "company_name": "A.Team",
+      "company_logo": "https://remotive.com/job/1919265/logo",
+      "category": "Software Development",
+      "tags": ["go", "wordpress", "chat", "apple", "testing", "catalyst"],
+      "job_type": "contract",
+      "publication_date": "2026-09-16T10:10:59",
+      "candidate_required_location": "Americas, Europe, Israel",
+      "salary": "$90 - $150 /hour",
+      "description": "<p style=\"text-size-adjust: 100%; overflow-wrap: break-word;\"><em>You must be located in the Americas, Europe, or Israel to apply.<br></em><br><br><a href=\"https://build.a.team/remotivereferral\" rel=\"nofollow\">A·Team</a> is a VC-backed, stealth, application-only home on the internet for senior independent software builders to team up with hand-picked, high-growth companies on their next big thing. </p>\n<p style=\"text-size-adjust: 100%; overflow-wrap: break-word;\">After talking with hundreds of independent engineers, designers, and product folks, we heard over and over that finding vetted, high-quality, consistent clients is hard, and projects are often too small to be rewarding. A·Team matches small teams of the most talented builders in the world with companies backed by a16z, YC, Softbank, General Catalyst, etc. on a contract basis for many of their most important initiatives. We quietly launched in May 2020, and have helped A·Teamers earn $85+ million since.</p>\n<p dir=\"ltr\" style=\"line-height: 1.38; margin-top: 12pt; margin-bottom: 12pt;\"><span style=\"font-variant-numeric: normal; font-variant-east-asian: normal; vertical-align: baseline;\"><em>As part of A·Team, you can expect:</em></span></p>\n<ul style=\"\">\n<li style=\"\"><strong>High-paying, meaningful missions with the most audacious companies</strong> sent your way; generally $90-$150+/hr, with vetted, fascinating clients doing work that matters. We're picky about who we partner with; new clients only come in via trusted referral. We've worked with Lyft, McGraw Hill, ClearCo, Pepsi, Walmart, the former CEO of Waze, the leading vaccine production software, several new unicorns we can't say here, and dozens of startups backed by a16z/YC/Softbank/Insight/Tiger/etc.</li>\n<li style=\"\"><strong>Work alongside friends old &amp; new: </strong>our niche is small/diverse product teams, since clients with larger budgets and higher-impact work tell us they want teams, not individuals. Of course, we keep friends together whenever we can.</li>\n<li style=\"\"><strong>Full autonomy:</strong> say \"no\" to things that don't excite you. The most talented builders often juggle a few things at once, so there's never pressure to join an A·Team mission if you don't have the bandwidth. If we're no longer a fit, it's easy to leave or pause too. </li>\n<li style=\"\"><strong>Small, curated, off-the-record gatherings:</strong> for conversations hard to have elsewhere. Long-term, we're creating micro-communities for the world's top bui"
+    },
+    {
+      "id": 999001,
+      "url": "not-a-url",
+      "company_name": "Broken Co",
+      "description": "<p>x</p>"
+    },
+    {
+      "id": 999002,
+      "title": "No description",
+      "company_name": "Broken Co",
+      "url": "https://example.com/j/999002"
+    }
+  ]
+}
