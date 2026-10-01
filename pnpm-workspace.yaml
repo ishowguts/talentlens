@@ -2,3 +2,7 @@ packages:
   - apps/*
   - packages/*
   - eval
+
+# esbuild ships a platform binary and needs its install script to run (tsx, drizzle-kit, vitest).
+allowBuilds:
+  esbuild: true

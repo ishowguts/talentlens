@@ -7,28 +7,26 @@ continue from this file alone.
 ## Active session
 
 - Status: IN PROGRESS
-- Task: T02 Local Postgres
-- Doing now: writing `docker-compose.yml` (`pgvector/pgvector:pg16`, named volume, healthcheck), the init script
-  that creates `talentlens` and `talentlens_test` with `CREATE EXTENSION vector`, and `.env.example` with every
-  variable from ARCHITECTURE §9 (placeholders only, no values).
+- Task: T03 Schema + migrations
+- Doing now:
+  1. Rename the workspace packages to `api`, `web`, `db`, `shared`, `eval` so the commands documented in
+     AGENTS.md (`pnpm --filter db migrate`, `pnpm --filter api ingest`, `pnpm --filter web dev`) resolve.
+  2. `packages/db`: Drizzle schema for every table in ARCHITECTURE §5, SQL migrations (including the generated
+     `search_tsv` column, the GIN index and the HNSW index), `db:generate` / `migrate` scripts, typed client.
 - Done this session:
-  - Session-start protocol: read AGENTS.md, HANDOFF, STATE, ARCHITECTURE, TASKS, DECISIONS, CONTEXT; `git status`
-    clean at dca0df2; `node scripts/guard.mjs all` green; `sh scripts/setup.sh` run.
-  - T01 done (99caed0): pnpm workspace, `tsconfig.base.json` (strict, NodeNext), ESLint flat config with
-    typescript-eslint, Prettier, `.nvmrc` 20, `packageManager` pinned, and a package for `apps/api`, `apps/web`,
-    `packages/db`, `packages/shared`, `eval`. `pnpm install && pnpm lint && pnpm typecheck` pass.
-- Next step: `docker compose up -d`, wait for the healthcheck, then verify
-  `docker compose exec -T db psql -U postgres -d talentlens -c "select extversion from pg_extension where extname='vector'"`
-  is ≥ 0.8 in both databases. Then commit `chore(db): add local Postgres with pgvector` and start T03.
+  - Session-start protocol; `node scripts/guard.mjs all` green; `sh scripts/setup.sh` run.
+  - T01 done (99caed0): pnpm workspace, strict TypeScript base config, ESLint + Prettier, Node 20 pin, five packages.
+  - T02 done (a3a9a51): `docker-compose.yml` with `pgvector/pgvector:pg16`, init script creating `talentlens` and
+    `talentlens_test` with the `vector` and `pg_trgm` extensions, `.env.example` with every §9 variable.
+    Verified: `vector 0.8.7` in both databases.
+- Next step: run the migration twice against `talentlens` (second run must be a no-op), confirm `\d jobs` shows
+  `search_tsv` as generated, then commit `feat(db): add schema and migrations` and start T04.
 - Files in flight (uncommitted): none.
 - Open problems / gotchas:
-  - Local Node is v25.7.0 while `.nvmrc` and CI pin 20 (the version in ARCHITECTURE §3). Development runs on the
-    local 25; CI is the source of truth for the supported version.
-  - `psql` is not installed on this machine. Run SQL through the container: `docker compose exec -T db psql -U postgres`.
-  - A filled `.env` already exists and must never be overwritten, printed or logged. Only `.env.example` is created,
-    with empty placeholders.
-  - Prettier ignores Markdown and `scripts/guard.mjs` on purpose (it reformatted the harness documents and the guard
-    on first run). Keep it that way; format those by hand.
+  - Local Node is v25.7.0 while `.nvmrc` and CI pin 20 (ARCHITECTURE §3). CI is the source of truth.
+  - `psql` is not installed on this machine. Use `docker compose exec -T db psql -U postgres -d talentlens`.
+  - A filled `.env` already exists. Never overwrite, print or log it. Only `.env.example` carries placeholders.
+  - Prettier ignores Markdown and `scripts/guard.mjs` on purpose; format those by hand.
   - Root `typecheck`/`test`/`build` use `pnpm -r --if-present`, so a package without code yet is skipped. Add the
     script to a package in the task that gives it its first source file.
 - Commands to verify: `pnpm install && pnpm lint && pnpm typecheck && pnpm test`

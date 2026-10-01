@@ -54,7 +54,7 @@ flowchart LR
 | Frontend | Next.js 14 App Router, React 18, Tailwind CSS |
 | Backend | Express 4, zod, pino + pino-http, express-rate-limit, multer, helmet, cors |
 | Database | PostgreSQL 16 + pgvector ≥ 0.8 (Docker locally, Neon in prod) |
-| ORM / migrations | Drizzle ORM + drizzle-kit; raw SQL migrations where Drizzle cannot express it (HNSW, generated tsvector) |
+| ORM / migrations | Drizzle ORM + drizzle-kit; migrations generated from the schema, with raw SQL statements added to a generated file when Drizzle cannot express something |
 | Embeddings | `Xenova/all-MiniLM-L6-v2` via `@huggingface/transformers` (Transformers.js), 384-d, mean pooling, L2-normalized, runs in-process |
 | LLM | Gemini via `@google/genai`, JSON response mode, output validated with zod |
 | PDF text | `unpdf` |
@@ -176,8 +176,10 @@ CREATE TABLE search_logs (
 ```
 
 Notes:
-- `search_tsv` and the HNSW index live in a hand-written SQL migration; Drizzle schema declares the columns with
-  `customType` so queries stay typed.
+- `search_tsv` is declared in the Drizzle schema as a `customType` tsvector with `generatedAlwaysAs`, and the GIN
+  and HNSW indexes are declared there too, so `drizzle-kit generate` emits all of them (see ADR-009). Only
+  `CREATE EXTENSION IF NOT EXISTS vector` is added to the generated file by hand, so a fresh database (Neon
+  included) can be migrated without a manual step.
 - Salary is normalized to annual. Adzuna gives annual figures; Remotive gives a free-text `salary` string, parsed
   best-effort (§7.1), left null when unparseable.
 
