@@ -3,9 +3,26 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { config } from 'dotenv';
 import { z } from 'zod';
+import { assertPostgresUrl } from 'db';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 config({ path: path.resolve(here, '../../../.env'), quiet: true });
+
+/** A zod check that fails with the URL problem itself, not with a DNS error later. */
+const postgresUrl = (varName: string) =>
+  z
+    .string()
+    .min(1, `${varName} is required`)
+    .superRefine((value, ctx) => {
+      try {
+        assertPostgresUrl(value, varName);
+      } catch (error) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: error instanceof Error ? error.message : String(error),
+        });
+      }
+    });
 
 const csv = (value: string) =>
   value
@@ -15,8 +32,8 @@ const csv = (value: string) =>
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-  DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
-  DATABASE_URL_TEST: z.string().min(1).optional(),
+  DATABASE_URL: postgresUrl('DATABASE_URL'),
+  DATABASE_URL_TEST: postgresUrl('DATABASE_URL_TEST').optional(),
   PORT: z.coerce.number().int().positive().default(4000),
   CORS_ORIGINS: z.string().default('http://localhost:3000').transform(csv),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),

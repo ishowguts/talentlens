@@ -302,6 +302,7 @@ same table. One LLM call returns `{ rewrittenTitle, notes[] }` (zod-validated); 
 | --- | --- | --- |
 | `DATABASE_URL` | api, eval | `postgres://postgres:postgres@localhost:5432/talentlens` |
 | `DATABASE_URL_TEST` | api tests | `postgres://postgres:postgres@localhost:5432/talentlens_test` |
+| `DATABASE_URL_PROD` | manual production operations only; no application reads it | (secret) |
 | `PORT` | api | `4000` |
 | `CORS_ORIGINS` | api | `http://localhost:3000` (comma-separated) |
 | `LOG_LEVEL` | api | `info` |
@@ -313,7 +314,10 @@ same table. One LLM call returns `{ rewrittenTitle, notes[] }` (zod-validated); 
 | `ADZUNA_COUNTRIES` | ingest | `in,gb,us` |
 | `NEXT_PUBLIC_API_URL` | web | `http://localhost:4000` |
 
-`apps/api/src/env.ts` parses these with zod at boot and exits with a readable message if any required var is missing.
+`apps/api/src/env.ts` parses these with zod at boot and exits with a readable message if any required var is
+missing. Connection strings are checked for shape as well as presence (`packages/db/src/url.ts`): every
+reserved character in a password must be percent-encoded (`@` as `%40`, `/` as `%2F`, and so on), because a
+URL parser may split at the first `@` and silently connect to whatever follows it.
 
 ## 10. Testing
 

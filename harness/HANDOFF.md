@@ -20,13 +20,21 @@ continue from this file alone.
   Supabase's usual `extensions` schema would have failed the restore.
 - Next step (T24), for whoever has the accounts:
   1. Render: create the service from `render.yaml` (region `singapore`, the closest to the Tokyo database).
-     Set `DATABASE_URL` to the value of `DATABASE_URL_PROD`,
+     Set `DATABASE_URL` to the value of `DATABASE_URL_PROD` **with the password percent-encoded**: the password
+     contains an `@`, which must be written `%40`. The first deploy failed on this: the URL was split at that
+     `@` and the text after it (`base`) was used as the hostname, so the build died on
+     `getaddrinfo ENOTFOUND base`. Then set `CORS_ORIGINS`,
      `CORS_ORIGINS` to the Vercel URL, plus `GEMINI_API_KEY` and `GEMINI_MODEL`. Health check `/api/health`
      should report `db: "ok"` and `jobs: 7141`.
   2. Vercel: import the repository, root directory `apps/web`, `NEXT_PUBLIC_API_URL` = the Render URL.
   3. Record both URLs in STATE under Live URLs and add the live link to the README.
 - Files in flight (uncommitted): none.
 - Open problems / gotchas:
+  - **A password with an unencoded `@` breaks the URL on some parsers and not others.** It parses correctly with
+    the Node version on this machine but not on Render's Node 20, which is why the first deploy failed rather
+    than local development. `packages/db/src/url.ts` now rejects it everywhere with an explicit message, so
+    `.env` itself should be fixed too: write the `@` in `DATABASE_URL_PROD` as `%40`. Until that is done,
+    `pnpm --filter db migrate` against production fails on purpose.
   - **Never print or log `DATABASE_URL_PROD`.** It stays in `.env` only. The copy was run by passing it to the
     container as `PG*` variables; the helper used for that lives in the session scratchpad, not in the repository.
   - Production started clean: `matches`, `resumes` and `search_logs` were truncated after the copy, so only the
@@ -55,6 +63,7 @@ blocked on deployment credentials.
 
 ## Log
 
+- 2026-10-02 · first Render deploy failed on a malformed DATABASE_URL (unencoded @ in the password, host read as "base"). Added connection-string validation in packages/db and documented the percent-encoding; the fix itself is a dashboard change.
 - 2026-10-02 · production truncated to the corpus only; render.yaml moved to the singapore region and the Neon references in ARCHITECTURE replaced with Supabase (ADR-015). Ready for Render.
 - 2026-10-02 · production database loaded from the local container and verified row for row; Render and Vercel still outstanding.
 - 2026-10-02 · T05 confirmed green on GitHub; marked done (c72c4e9). T24 will load Neon from a pg_dump of the local database instead of re-ingesting (ADR-014); waiting for the Neon URL.
