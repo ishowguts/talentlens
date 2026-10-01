@@ -66,3 +66,11 @@ Append-only. Format: number, date, decision, why, consequences. To reverse one, 
   database (for example to paginate deeper than the fused head of 200), the SQL from the original sketch is the
   starting point and this ADR must be superseded.
 
+## ADR-012 · 2026-10-02 · Model thinking is disabled for the rerank call
+- Why: measured against the real model, a rerank prompt (a 6,000-character resume plus 20 jobs) did not finish
+  inside the 15 s `LLM_TIMEOUT_MS` from ARCHITECTURE §9 with thinking enabled, so every request fell back to
+  vector order and no fit score was ever produced. With `thinkingConfig.thinkingBudget = 0` the same call
+  answers in a few seconds.
+- Consequence: ranking quality depends on the model's direct answer. If a future task needs deliberation, raise
+  `LLM_TIMEOUT_MS` in the same change rather than removing the fallback, which ADR-008 requires.
+

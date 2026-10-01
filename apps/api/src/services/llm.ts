@@ -21,7 +21,13 @@ export function createLlmClient(apiKey: string | undefined, model: string | unde
         client.models.generateContent({
           model,
           contents: prompt,
-          config: { responseMimeType: 'application/json', temperature: 0 },
+          config: {
+            responseMimeType: 'application/json',
+            temperature: 0,
+            // Thinking is off: with it on, a 20-job rerank prompt does not finish inside LLM_TIMEOUT_MS
+            // (15 s), so every rerank fell back to vector order. See ADR-012.
+            thinkingConfig: { thinkingBudget: 0 },
+          },
         }),
         timeoutMs,
       );

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { MatchResponse } from 'shared';
+import { MatchResultCard } from '../../components/MatchResultCard';
 import { ResumeUpload } from '../../components/ResumeUpload';
 
 export default function MatchPage() {
@@ -19,22 +20,26 @@ export default function MatchPage() {
       <ResumeUpload onMatched={setResponse} />
 
       {response && (
-        <section className="space-y-2">
-          <h2 className="text-lg font-medium">
-            {response.matches.length} matches
-            {response.reranked ? '' : ' (ranked by similarity only)'}
-          </h2>
-          <ul className="space-y-2">
-            {response.matches.map((match) => (
-              <li key={match.job.id} className="rounded-lg border border-stone-200 bg-white p-4">
-                <p className="font-medium">{match.job.title}</p>
-                <p className="text-sm text-stone-600">
-                  {match.job.company}
-                  {match.job.location ? ` · ${match.job.location}` : ''}
-                </p>
-              </li>
+        <section className="space-y-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-lg font-medium">{response.matches.length} matches</h2>
+            {!response.reranked && (
+              <p className="rounded-md bg-stone-100 px-2 py-1 text-xs text-stone-600">
+                Ranked by similarity only: the explanation model was unavailable or its answer was rejected.
+              </p>
+            )}
+          </div>
+
+          <ul className="space-y-3">
+            {response.matches.map((match, index) => (
+              <MatchResultCard key={match.job.id} match={match} position={index + 1} />
             ))}
           </ul>
+
+          <p className="text-xs text-stone-500">
+            Nothing from the resume is stored beyond its text and vector, which are reused if the same resume
+            is uploaded again.
+          </p>
         </section>
       )}
     </div>
