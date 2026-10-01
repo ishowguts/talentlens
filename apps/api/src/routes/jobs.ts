@@ -2,8 +2,11 @@ import { Router } from 'express';
 import { sql } from 'drizzle-orm';
 import type { Database } from 'db';
 import type { Job, Stats } from 'shared';
+import { scoreRequestSchema } from 'shared';
 import { ApiError } from '../lib/ApiError.js';
 import { snippet } from '../lib/text.js';
+import { createRateLimiter } from '../middleware/rateLimit.js';
+import { scoreJobAd, type ScorerDeps } from '../services/scorer.js';
 
 interface JobRow extends Record<string, unknown> {
   id: string | number;
@@ -21,9 +24,17 @@ interface JobRow extends Record<string, unknown> {
   url: string;
 }
 
-/** GET /api/jobs/:id and GET /api/stats (ARCHITECTURE section 6). */
-export function jobsRouter(db: Database): Router {
+/** GET /api/jobs/:id, GET /api/stats and POST /api/jobs/score (ARCHITECTURE section 6). */
+export function jobsRouter(db: Database, scorer: ScorerDeps, scoreLimitPerMinute: number): Router {
   const router = Router();
+
+  router.post('/jobs/score', createRateLimiter(scoreLimitPerMinute), async (req, res, next) => {
+    try {
+      res.json(await scoreJobAd(scorer, scoreRequestSchema.parse(req.body ?? {})));
+    } catch (error) {
+      next(error);
+    }
+  });
 
   router.get('/jobs/:id', async (req, res, next) => {
     try {

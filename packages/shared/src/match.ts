@@ -47,3 +47,49 @@ export const rerankResponseSchema = z.object({
 });
 
 export type RerankResponse = z.infer<typeof rerankResponseSchema>;
+
+// --- Job ad scorer (ARCHITECTURE sections 6 and 7.5) ---
+
+export const scoreRequestSchema = z.object({
+  title: z.string().trim().min(3).max(150),
+  description: z.string().trim().min(50).max(20_000),
+  location: z.string().trim().max(200).optional(),
+  salaryMin: z.coerce.number().int().positive().optional(),
+  salaryMax: z.coerce.number().int().positive().optional(),
+});
+
+export type ScoreRequest = z.infer<typeof scoreRequestSchema>;
+
+export const scoreCheckSchema = z.object({
+  id: z.enum(['salary', 'length', 'title', 'location', 'requirements', 'inclusive', 'structure']),
+  label: z.string(),
+  pass: z.boolean(),
+  detail: z.string(),
+  weight: z.number(),
+});
+
+export type ScoreCheck = z.infer<typeof scoreCheckSchema>;
+export type ScoreCheckId = ScoreCheck['id'];
+
+export const flaggedTermSchema = z.object({
+  term: z.string(),
+  reason: z.string(),
+  suggestion: z.string(),
+});
+
+export const scoreResponseSchema = z.object({
+  score: z.number().int().min(0).max(100),
+  checks: z.array(scoreCheckSchema),
+  flaggedTerms: z.array(flaggedTermSchema),
+  /** Null when the model was unavailable or its answer was rejected. */
+  rewrittenTitle: z.string().nullable(),
+  notes: z.array(z.string()),
+});
+
+export type ScoreResponse = z.infer<typeof scoreResponseSchema>;
+
+/** What the suggestion model must return. Its output is untrusted input (ADR-008). */
+export const scoreSuggestionSchema = z.object({
+  rewrittenTitle: z.string().min(3).max(80),
+  notes: z.array(z.string().min(1)).max(5),
+});

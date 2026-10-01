@@ -2,9 +2,12 @@
 import {
   jobSchema,
   matchResponseSchema,
+  scoreResponseSchema,
   searchResponseSchema,
   type Job,
   type MatchResponse,
+  type ScoreRequest,
+  type ScoreResponse,
   type SearchMode,
   type SearchResponse,
 } from 'shared';
@@ -82,6 +85,17 @@ export async function matchResume(input: { file: File } | { text: string }): Pro
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ text: input.text }),
+    }),
+  );
+}
+
+/** Score a job advert. The score is deterministic; only the title rewrite and notes come from a model. */
+export async function scoreJobAd(ad: ScoreRequest): Promise<ScoreResponse> {
+  return scoreResponseSchema.parse(
+    await requestJson('/jobs/score', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(ad),
     }),
   );
 }

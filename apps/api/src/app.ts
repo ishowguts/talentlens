@@ -58,7 +58,7 @@ export function createApp({
   app.use(express.json({ limit: '1mb' }));
 
   app.use('/api', healthRouter(db, env));
-  app.use('/api', jobsRouter(db));
+  app.use('/api', jobsRouter(db, { llm, llmTimeoutMs: env.LLM_TIMEOUT_MS }, limits.score));
   app.use('/api', searchRouter({ db, embedder }, limits.search));
   app.use('/api', matchRouter({ db, embedder, llm, llmTimeoutMs: env.LLM_TIMEOUT_MS }, limits.match));
 
