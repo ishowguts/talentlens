@@ -4,9 +4,13 @@ import type { Database } from 'db';
 import type { JobSummary, SearchFilters, SearchQuery, SearchResponse, SearchResult } from 'shared';
 import { snippet } from '../lib/text.js';
 import type { Embedder } from './embeddings.js';
+import { rrfFuse } from './rrf.js';
 
 /** Rows each mode retrieves before fusion and pagination. */
 export const CANDIDATE_LIMIT = 100;
+
+/** Pagination runs over the fused head only; past this, `hasMore` is false (section 7.3). */
+export const MAX_FUSED = 200;
 
 export interface SearchDeps {
   db: Database;
@@ -129,6 +133,35 @@ export async function keywordCandidates(
   }));
 }
 
+/**
+ * Hybrid candidates: keyword and vector lists fused with RRF. Keyword catches exact titles and acronyms,
+ * vectors catch synonyms and intent (ADR-006).
+ */
+export async function hybridCandidates(
+  deps: SearchDeps,
+  queryText: string,
+  filters: SearchFilters,
+): Promise<SearchResult[]> {
+  const [keyword, vector] = await Promise.all([
+    keywordCandidates(deps, queryText, filters),
+    vectorCandidates(deps, queryText, filters),
+  ]);
+
+  const summaries = new Map<number, JobSummary>();
+  for (const result of [...keyword, ...vector]) summaries.set(result.job.id, result.job);
+
+  const fused = rrfFuse([
+    { source: 'keyword', ids: keyword.map((result) => result.job.id) },
+    { source: 'vector', ids: vector.map((result) => result.job.id) },
+  ]);
+
+  return fused.slice(0, MAX_FUSED).map((entry) => ({
+    job: summaries.get(entry.id)!,
+    score: entry.score,
+    ranks: entry.ranks,
+  }));
+}
+
 /** Record the search so result quality can be measured later (section 7.3). */
 async function logSearch(
   db: Database,
@@ -167,9 +200,9 @@ export async function search(deps: SearchDeps, query: SearchQuery): Promise<Sear
     case 'keyword':
       candidates = await keywordCandidates(deps, query.q, filters);
       break;
-    default:
-      // Added in T13.
-      throw new Error(`search: mode "${query.mode}" is not implemented yet`);
+    case 'hybrid':
+      candidates = await hybridCandidates(deps, query.q, filters);
+      break;
   }
 
   const offset = (query.page - 1) * query.pageSize;

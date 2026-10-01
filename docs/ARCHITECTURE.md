@@ -243,32 +243,11 @@ All modes share the same filter clause: `($remote IS NULL OR j.is_remote = $remo
 - **keyword:** `websearch_to_tsquery('english', q)`, rank `ts_rank_cd(search_tsv, query)`, top 100.
 - **vector:** embed `q`, `ORDER BY embedding <=> $vec LIMIT 100`. Per query set `SET LOCAL hnsw.ef_search = 100` and
   `SET LOCAL hnsw.iterative_scan = relaxed_order` (pgvector 0.8) so filtered queries still return enough rows.
-- **hybrid (RRF, k = 60):**
-
-```sql
-WITH kw AS (
-  SELECT j.id, row_number() OVER (ORDER BY ts_rank_cd(j.search_tsv, q) DESC) AS r
-  FROM jobs j, websearch_to_tsquery('english', $1) q
-  WHERE j.search_tsv @@ q AND <filters>
-  ORDER BY ts_rank_cd(j.search_tsv, q) DESC
-  LIMIT 100
-),
-vec AS (
-  SELECT e.job_id AS id, row_number() OVER (ORDER BY e.embedding <=> $2) AS r
-  FROM job_embeddings e JOIN jobs j ON j.id = e.job_id
-  WHERE <filters>
-  ORDER BY e.embedding <=> $2
-  LIMIT 100
-)
-SELECT id,
-       sum(1.0 / (60 + r))                         AS score,
-       min(r) FILTER (WHERE src = 'kw')            AS kw_rank,
-       min(r) FILTER (WHERE src = 'vec')           AS vec_rank
-FROM (SELECT id, r, 'kw' AS src FROM kw UNION ALL SELECT id, r, 'vec' FROM vec) u
-GROUP BY id
-ORDER BY score DESC
-LIMIT $limit OFFSET $offset;
-```
+- **hybrid (RRF, k = 60):** the keyword and the vector candidate queries above run in parallel, and their two
+  ranked id lists are fused in the API with `score = sum(1 / (60 + rank))`. Fusion needs only ranks, so it is a
+  pure function (`services/rrf.ts`) that is unit-tested on hand-made lists; see ADR-011 for why it is not a
+  single fused SQL statement. The response carries `ranks.keyword` and `ranks.vector`, either of which is null
+  when that mode did not return the job.
 
   Pagination is over the fused top-200 at most; `hasMore` is false past that.
 - Every search writes one `search_logs` row (query, mode, filters, latency, result ids) and returns its `logId`;

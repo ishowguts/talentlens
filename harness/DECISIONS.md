@@ -56,3 +56,13 @@ Append-only. Format: number, date, decision, why, consequences. To reverse one, 
 - Consequence: fewer jobs carry a salary, so the `salaryMin` search filter matches a smaller set. Advertised
   salaries (`salary_is_predicted: "0"`) are kept as annual figures in the country's currency.
 
+## ADR-011 · 2026-10-02 · RRF fusion runs in the API, not in one fused SQL statement
+- Why: the design sketch fused the keyword and vector candidate lists inside a single SQL statement, which
+  returns ids, a score and the two ranks, so a second query is still needed to fetch the job rows behind those
+  ids. Running the two candidate queries that the `keyword` and `vector` modes already use (in parallel) and
+  fusing their ranks in the API costs the same two round trips, shares one code path and one filter clause with
+  the other two modes, and makes fusion a pure function that is unit-tested without a database.
+- Consequence: `services/rrf.ts` holds the only implementation of RRF. If fusion ever has to happen inside the
+  database (for example to paginate deeper than the fused head of 200), the SQL from the original sketch is the
+  starting point and this ADR must be superseded.
+
