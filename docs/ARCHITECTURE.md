@@ -60,7 +60,7 @@ flowchart LR
 | PDF text | `unpdf` |
 | Tests | Vitest + Supertest against a real Postgres (Docker, separate `talentlens_test` DB) |
 | CI | GitHub Actions: guard, lint, typecheck, test |
-| Deploy | Vercel (web), Render (api), Neon (Postgres + pgvector) |
+| Deploy | Vercel (web), Render (api, `singapore`), Supabase (Postgres + pgvector, Tokyo); see ADR-015 |
 
 ## 4. Repository layout
 
@@ -178,8 +178,8 @@ CREATE TABLE search_logs (
 Notes:
 - `search_tsv` is declared in the Drizzle schema as a `customType` tsvector with `generatedAlwaysAs`, and the GIN
   and HNSW indexes are declared there too, so `drizzle-kit generate` emits all of them (see ADR-009). Only
-  `CREATE EXTENSION IF NOT EXISTS vector` is added to the generated file by hand, so a fresh database (Neon
-  included) can be migrated without a manual step.
+  `CREATE EXTENSION IF NOT EXISTS vector` is added to the generated file by hand, so a fresh database (the
+  production one included) can be migrated without a manual step.
 - Salary is normalized to annual. Adzuna gives annual figures; Remotive gives a free-text `salary` string, parsed
   best-effort (§7.1), left null when unparseable.
 

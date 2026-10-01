@@ -1,6 +1,6 @@
 # TalentLens — State
 
-Last updated: 2026-10-02 · Phase: **Day 7 — Prove it, ship it** · Next task: **T24** (waiting for the Neon URL) · every other task is done (owner's order: T01–T14, T19, T15–T18, T21, T22, T24, T25, T20 last)
+Last updated: 2026-10-02 · Phase: **Day 7 — Prove it, ship it** · Next task: **T24** (database loaded; Render and Vercel outstanding) · every other task is done (owner's order: T01–T14, T19, T15–T18, T21, T22, T24, T25, T20 last)
 
 Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-DD, <commit>)`
 
