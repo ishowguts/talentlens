@@ -1,6 +1,6 @@
 # TalentLens — State
 
-Last updated: 2026-10-02 · Phase: **Day 1 — Foundation** · Next task: **T09**
+Last updated: 2026-10-02 · Phase: **Day 1 — Foundation** · Next task: **T10** (embedding backfill running)
 
 Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-DD, <commit>)`
 
@@ -14,8 +14,8 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T06 | Remotive client | done (2026-10-02, 7989c47) |
 | T07 | Adzuna client | done (2026-10-02, 9f73fb0) |
 | T08 | Normalize, dedupe, upsert, CLI | done (2026-10-02, d3ddf06) |
-| T09 | Embedding service | todo |
-| T10 | Embedding backfill with cache | todo |
+| T09 | Embedding service | done (2026-10-02, e88ca1f) |
+| T10 | Embedding backfill with cache | in-progress (code committed 8a44e54; full backfill running) |
 | T11 | Vector search endpoint | todo |
 | T12 | Keyword search | todo |
 | T13 | Hybrid RRF + pagination | todo |
