@@ -1,4 +1,5 @@
 export * from './search.js';
+export * from './match.js';
 
 // Contracts shared by the API and the web app. See docs/ARCHITECTURE.md section 6.
 

@@ -1,4 +1,5 @@
 import type { ErrorRequestHandler, RequestHandler } from 'express';
+import { MulterError } from 'multer';
 import { ZodError } from 'zod';
 import type { ApiErrorBody, ErrorCode } from 'shared';
 import { ERROR_STATUS } from 'shared';
@@ -18,6 +19,11 @@ function classify(err: unknown): { code: ErrorCode; message: string; details?: u
   if (err instanceof ApiError) return { code: err.code, message: err.message, details: err.details };
   if (err instanceof ZodError) {
     return { code: 'VALIDATION_ERROR', message: 'Invalid request', details: err.issues };
+  }
+  if (err instanceof MulterError) {
+    return err.code === 'LIMIT_FILE_SIZE'
+      ? { code: 'PAYLOAD_TOO_LARGE', message: 'The uploaded file is too large' }
+      : { code: 'VALIDATION_ERROR', message: `Upload rejected: ${err.message}` };
   }
   const candidate = err as BodyParserError;
   if (candidate?.type === 'entity.too.large') {

@@ -5,6 +5,8 @@ packages:
 
 # esbuild ships a platform binary and needs its install script to run (tsx, drizzle-kit, vitest).
 allowBuilds:
+  '@google/genai': true
+  canvas: false
   esbuild: true
   onnxruntime-node: true
   protobufjs: true
