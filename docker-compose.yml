@@ -1,0 +1,24 @@
+# Local PostgreSQL with pgvector. See docs/ARCHITECTURE.md section 3.
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: talentlens-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: talentlens
+    ports:
+      - '5432:5432'
+    volumes:
+      - talentlens-pgdata:/var/lib/postgresql/data
+      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d talentlens']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  talentlens-pgdata:
