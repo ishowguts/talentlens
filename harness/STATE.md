@@ -29,7 +29,7 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T21 | Match + scorer UI | done (2026-10-02, 5bc3e70) |
 | T22 | Evaluation tooling | in-progress · tooling done (71d3289) and the automated judge added (ADR-017), but its labels failed validation (kappa -0.051) and only 14 of 50 queries are judged (free-tier daily cap), so no quality number is published |
 | T23 | Test coverage pass | done (2026-10-02, e055972) |
-| T24 | Deploy | in-progress (all three services live; web and API verified, URLs recorded. Two host settings have not taken effect: CORS_ORIGINS matches no origin, and no reranking model is configured) |
+| T24 | Deploy | in-progress · database, API and web all live and verified, URLs recorded, reranking confirmed working on production. The one criterion outstanding is "CORS set": the allowlist on the API host matches no origin, so browser-side POSTs from the web app are still blocked |
 | T25 | README | done (2026-10-02, a185bd2) · the live link and the demo GIF wait on T24 |
 
 ## Measurements
@@ -54,14 +54,18 @@ Only measured values, each with the command that produced it and the commit.
 - Web: <https://talentlens-silk.vercel.app> (Vercel). Verified 2026-10-02: the home page, a search for "senior
   react developer" (20 results, both rank badges on every row, server latency shown), `/jobs/[id]` with its
   source credit and outbound link, the `/match` drop zone, the `/score` form, and the keyword empty state all
-  render against the live API. The pages that render on the server work; the calls a browser makes from the page
-  (click logging, resume upload, advert scoring) are blocked until `CORS_ORIGINS` matches this origin.
+  render against the live API. The pages that render on the server work, which includes search end to end from
+  the live web URL. The calls a browser makes from the page (click logging, resume upload, advert scoring) are
+  still blocked: as of 2026-10-03 the API returns no `Access-Control-Allow-Origin` for this origin, nor for any
+  spelling of it, nor for `http://localhost:3000`.
 - API: <https://talentlens-api-k0rp.onrender.com> (Render, `singapore`). Verified 2026-10-02 end to end:
   `/api/health` reports `db: "ok"` and `jobs: 7141`; `/api/stats` matches the corpus; all three search modes
   return ranked results with the expected rank badges; `/api/jobs/:id` returns a full posting with its source
   and link; `/api/search/click` returns 204; a missing job gives 404 and an empty query 400 in the documented
   error shape; `/api/match` returns 10 results; `/api/jobs/score` scores a deliberately bad advert 10 and flags
-  five terms.
+  five terms. Re-verified 2026-10-03 with the model configured: `/api/health` reports `llm: "configured"`,
+  `/api/match` returns `reranked: true` with fit scores 95/90/88/85 and grounded reasons in 9.7 s, and
+  `/api/jobs/score` returns a rewritten title and three suggested edits while leaving the rules-only score at 10.
 - Database: Supabase, PostgreSQL 17.11, ap-northeast-1 (Tokyo), session pooler. Loaded 2026-10-02 from the local
   container with `pg_dump | psql` (ADR-014). The connection string lives only in `.env` as `DATABASE_URL_PROD`.
   Verified against local: jobs 7,141, companies 3,124, job_embeddings 7,141 (384 dimensions), resumes 1,

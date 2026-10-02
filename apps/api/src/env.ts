@@ -36,11 +36,26 @@ const csv = (value: string) =>
  * matches the "https://app.example.com" a browser puts in the Origin header.
  */
 export function normalizeOrigin(value: string): string {
-  const trimmed = value.trim().replace(/\/+$/, '');
+  // Dashboard values arrive with surrounding quotes, stray punctuation or no scheme more often than not.
+  // Quotes, commas and whitespace can be nested in any order, so strip until the value stops changing.
+  let cleaned = value;
+  for (let i = 0; i < 4; i += 1) {
+    const stripped = cleaned.replace(/^[\s"'`,;]+/, '').replace(/[\s"'`,;]+$/, '');
+    if (stripped === cleaned) break;
+    cleaned = stripped;
+  }
+  cleaned = cleaned.replace(/\/+$/, '');
+  if (!cleaned) return '';
+
+  const withScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(cleaned)
+    ? cleaned
+    : // A bare host is assumed to be https, except on a loopback name, which is only ever served over http.
+      `${/^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i.test(cleaned) ? 'http' : 'https'}://${cleaned}`;
+
   try {
-    return new URL(trimmed).origin.toLowerCase();
+    return new URL(withScheme).origin.toLowerCase();
   } catch {
-    return trimmed.toLowerCase();
+    return cleaned.toLowerCase();
   }
 }
 

@@ -35,6 +35,18 @@ describe('normalizeOrigin', () => {
     expect(normalizeOrigin(`${APP_ORIGIN}/search`)).toBe(APP_ORIGIN);
     expect(normalizeOrigin(' HTTPS://TalentLens-Silk.Vercel.App ')).toBe(APP_ORIGIN);
   });
+
+  it('accepts the ways a value gets pasted into a dashboard', () => {
+    expect(normalizeOrigin('"https://talentlens-silk.vercel.app"')).toBe(APP_ORIGIN);
+    expect(normalizeOrigin("'https://talentlens-silk.vercel.app',")).toBe(APP_ORIGIN);
+    expect(normalizeOrigin('talentlens-silk.vercel.app')).toBe(APP_ORIGIN);
+    expect(normalizeOrigin('talentlens-silk.vercel.app/')).toBe(APP_ORIGIN);
+  });
+
+  it('keeps http for a loopback host, where https is never served', () => {
+    expect(normalizeOrigin('localhost:3000')).toBe('http://localhost:3000');
+    expect(normalizeOrigin('127.0.0.1:3000')).toBe('http://127.0.0.1:3000');
+  });
 });
 
 describe('CORS allowlist', () => {
@@ -71,6 +83,16 @@ describe('CORS allowlist', () => {
     const res = await request(configured.app).get('/api/health');
 
     expect(res.status).toBe(200);
+  });
+
+  it('allows the origin when the environment value was pasted with quotes', async () => {
+    const quoted = appWith(`"${APP_ORIGIN}"`);
+    try {
+      const res = await request(quoted.app).get('/api/health').set('origin', APP_ORIGIN);
+      expect(res.headers['access-control-allow-origin']).toBe(APP_ORIGIN);
+    } finally {
+      await quoted.close();
+    }
   });
 
   it('refuses to boot on an empty CORS_ORIGINS', () => {
