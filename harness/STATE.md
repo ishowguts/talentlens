@@ -1,6 +1,6 @@
 # TalentLens — State
 
-Last updated: 2026-10-02 · Phase: **Day 7 — Prove it, ship it** · Next task: **T24** (database loaded; Render and Vercel outstanding) · every other task is done (owner's order: T01–T14, T19, T15–T18, T21, T22, T24, T25, T20 last)
+Last updated: 2026-10-03 · Phase: **Day 7 — Prove it, ship it** · Next task: **T22** (the only one open: the automated judge's labels failed validation, so no search quality number is published). Everything else is done and deployed.
 
 Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-DD, <commit>)`
 
@@ -29,8 +29,8 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T21 | Match + scorer UI | done (2026-10-02, 5bc3e70) |
 | T22 | Evaluation tooling | in-progress · tooling done (71d3289) and the automated judge added (ADR-017), but its labels failed validation (kappa -0.051) and only 14 of 50 queries are judged (free-tier daily cap), so no quality number is published |
 | T23 | Test coverage pass | done (2026-10-02, e055972) |
-| T24 | Deploy | in-progress · database, API and web all live and verified, URLs recorded, reranking confirmed working on production. The one criterion outstanding is "CORS set": the allowlist on the API host matches no origin, so browser-side POSTs from the web app are still blocked |
-| T25 | README | done (2026-10-02, a185bd2) · the live link and the demo GIF wait on T24 |
+| T24 | Deploy | done (2026-10-03, pending) |
+| T25 | README | done (2026-10-02, a185bd2) · both live links are in it; the demo GIF is the owner's to record |
 
 ## Measurements
 
@@ -54,10 +54,11 @@ Only measured values, each with the command that produced it and the commit.
 - Web: <https://talentlens-silk.vercel.app> (Vercel). Verified 2026-10-02: the home page, a search for "senior
   react developer" (20 results, both rank badges on every row, server latency shown), `/jobs/[id]` with its
   source credit and outbound link, the `/match` drop zone, the `/score` form, and the keyword empty state all
-  render against the live API. The pages that render on the server work, which includes search end to end from
-  the live web URL. The calls a browser makes from the page (click logging, resume upload, advert scoring) are
-  still blocked: as of 2026-10-03 the API returns no `Access-Control-Allow-Origin` for this origin, nor for any
-  spelling of it, nor for `http://localhost:3000`.
+  render against the live API. Browser-side calls work too: re-verified 2026-10-03, the API returns
+  `access-control-allow-origin: https://talentlens-silk.vercel.app` on `GET /api/search`,
+  `POST /api/search/click` and `POST /api/jobs/score`, answers the preflight 204 with `GET,POST` and
+  `content-type`, and returns no header for a foreign origin. An earlier report that CORS refused every origin
+  was a measurement error, not a fault; see ADR-018.
 - API: <https://talentlens-api-k0rp.onrender.com> (Render, `singapore`). Verified 2026-10-02 end to end:
   `/api/health` reports `db: "ok"` and `jobs: 7141`; `/api/stats` matches the corpus; all three search modes
   return ranked results with the expected rank badges; `/api/jobs/:id` returns a full posting with its source

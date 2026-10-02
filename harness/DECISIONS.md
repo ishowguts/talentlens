@@ -143,3 +143,19 @@ Append-only. Format: number, date, decision, why, consequences. To reverse one, 
   14 of 50 queries are judged, and all 14 are exact-title queries, the easiest of the three types. Even a
   working judge would need a paid key or several days to cover the set.
 
+## ADR-018 · 2026-10-03 · Correction: the CORS outage recorded in ADR-016 never happened
+- What ADR-016 claims: that on the first full deployment the API returned no `Access-Control-Allow-Origin` for
+  any origin, and that browser requests from the web app were blocked.
+- What was actually true: CORS was configured correctly on the host and the API was returning the header all
+  along. The probe that reported otherwise built a plain dictionary from the response headers and then looked
+  up `Access-Control-Allow-Origin` with case-sensitive access, while the header arrives lower-cased over
+  HTTP/2. Every "no header" result came from that, not from the service. `curl -D -` showed the header present,
+  and a corrected probe confirms the allowlist accepts the app's origin, refuses a foreign one, and answers a
+  preflight with `GET,POST` and `content-type`.
+- Consequence: the code ADR-016 introduced stays, because each part is defensible on its own merits and is
+  covered by tests: normalized origin comparison, an empty `CORS_ORIGINS` failing at boot instead of silently
+  refusing everyone, the boot log of the parsed allowlist, and `llm` on `/health`, which did earn its place by
+  settling a real question. But ADR-016's reasoning records a fault that did not exist, and a successor reading
+  it would believe the deployment had been broken. It had not. The lesson worth keeping: verify a negative
+  result with a second tool before acting on it, especially when it contradicts what the operator reports.
+
