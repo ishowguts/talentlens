@@ -6,14 +6,16 @@
   "scripts": {
     "start": "tsx run.ts",
     "label": "tsx label.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "judge": "tsx judgeRun.ts"
   },
   "dependencies": {
     "api": "workspace:*",
     "db": "workspace:*",
-    "shared": "workspace:*",
     "dotenv": "^16.4.5",
-    "drizzle-orm": "^0.44.2"
+    "drizzle-orm": "^0.44.2",
+    "shared": "workspace:*",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20.16.11",

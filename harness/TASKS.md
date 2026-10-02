@@ -115,7 +115,10 @@ Spec references point to `docs/ARCHITECTURE.md` sections (§).
 
 **T22 Evaluation tooling** · deps: T13
 - `eval/label.ts` pooling + labeling CLI; `eval/run.ts` metrics → `eval/results.md` (§8).
-- The owner labels the 50 queries. Agents must not label or invent relevance judgments.
+- Labels may come from the owner by hand (`eval/label.ts`) or from the automated judge (`eval/judge.ts`,
+  authorized by the owner, ADR-017). An automated label set must be validated against hand labels and must
+  report Cohen's kappa, not raw agreement alone; its numbers are not reported as results until it passes.
+  Agents must never invent a relevance judgment or a metric.
 - Accept: `pnpm eval` produces the table from `eval/queries.jsonl`. Numbers copied to STATE Measurements.
 
 **T23 Test coverage pass** · deps: T19, T20, T14

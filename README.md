@@ -78,9 +78,14 @@ with a throttled shared CPU. The keyword number, which does no embedding, is mos
 in Singapore to the database in Tokyo. The local numbers are what the design is budgeted against
 ([ARCHITECTURE §12](docs/ARCHITECTURE.md)); the live numbers are what a free tier delivers.
 
-Recall@10 and MRR@10 for the three modes are **not published yet**: the 50 queries in `eval/queries.jsonl` need
-relevance judgements, which are made by hand (`pnpm --filter eval label`). `pnpm eval` writes
-[eval/results.md](eval/results.md) and refuses to report a quality metric it cannot measure.
+Recall@10, Precision@10, nDCG@10 and MRR@10 are computed by `pnpm eval`, but **no search quality number is
+published here yet, because the label set behind them has not passed validation.** The 50 queries in
+`eval/queries.jsonl` can be labeled by hand (`pnpm --filter eval label`) or by an automated Gemini relevance
+judge (`pnpm --filter eval judge`). The judge was checked against the owner's hand labels on 10 queries: 78.5%
+raw agreement, but Cohen's kappa -0.051, which is no better than chance, because both labelers call nearly
+every pooled job relevant (86.1% and 91.0%). `pnpm eval` reports that verdict itself and marks the figures as
+not a result; [eval/results.md](eval/results.md) carries the full table either way, and ADR-017 records what
+would have to change in the evaluation design to fix it.
 
 ## Run locally
 

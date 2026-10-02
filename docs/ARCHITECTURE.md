@@ -87,7 +87,11 @@ talentlens/
 │  ├─ db/                     schema.ts, client.ts, migrations/
 │  └─ shared/                 zod schemas + inferred types shared by api and web
 ├─ eval/
-│  ├─ queries.jsonl           50 labeled queries (owner-labeled)
+│  ├─ queries.jsonl           50 queries; `relevant` holds the owner's hand labels
+│  ├─ judge-labels.jsonl     automated judge verdicts, keyed by query id and content hash
+│  ├─ rubric.ts              the versioned relevance rubric the judge applies
+│  ├─ judge.ts               automated relevance judge (ADR-017)
+│  ├─ metrics.ts             recall, precision, nDCG, MRR, Cohen's kappa
 │  ├─ label.ts                pooling + interactive labeling CLI
 │  └─ run.ts                  computes Recall@10, MRR@10 per mode → eval/results.md
 ├─ docker-compose.yml         postgres (pgvector/pgvector:pg16)
@@ -294,10 +298,20 @@ same table. One LLM call returns `{ rewrittenTitle, notes[] }` (zod-validated); 
 
 - 50 queries in `eval/queries.jsonl`: `{ "id": "q01", "query": "...", "relevant": ["<content_hash>", ...] }`.
   Relevance is keyed by `content_hash` so labels survive re-ingestion.
-- **Labeling is done by the owner by hand.** `eval/label.ts` pools the top 20 from each mode for a query (TREC-style
-  pooling), shuffles them, and shows them one by one for a y/n judgment. Agents build the tool; they do not label.
-- `eval/run.ts` runs each query in all three modes and writes `eval/results.md`:
-  Recall@10, MRR@10, and mean latency per mode, plus the command and commit hash used.
+- **Labeling.** Two tools produce labels, both over the same pool (the top 20 from each mode, TREC-style):
+  `eval/label.ts` shuffles the pool and asks the owner for a y/n judgment on each job, and `eval/judge.ts` asks
+  the Gemini client to judge the whole pool in one call against the fixed rubric in `eval/rubric.ts`. Judge
+  verdicts live in `eval/judge-labels.jsonl`, keyed by query id and content hash, and never overwrite the
+  owner's labels in `queries.jsonl`.
+- **An automated label set must pass validation before its numbers are reported.** `pnpm eval` compares the
+  judge against the owner's hand labels on the queries that have both, and reports raw agreement and Cohen's
+  kappa. Raw agreement alone is not enough: when nearly every pooled job is called relevant, agreement is
+  near-automatic and kappa exposes it. The judge built in ADR-017 scored kappa -0.051 and its labels are
+  therefore not published as results.
+- `eval/run.ts` runs each query in all three modes and writes `eval/results.md`: Recall@10, Precision@10,
+  nDCG@10, MRR@10, mean and p50 latency per mode, a breakdown by query type, the judge validation table, and the
+  command and commit hash used. Relevance is binary, so nDCG uses a gain of 1. Metrics are computed from the
+  judge labels by default and from the owner's labels with `--human`.
 - Query mix: 20 exact-title queries ("senior react developer"), 15 skill/intent queries ("build data pipelines in
   python"), 15 vague or synonym queries ("frontend role that pays well, remote"). The mix is reported with results.
 

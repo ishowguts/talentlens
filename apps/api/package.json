@@ -44,6 +44,7 @@
     "./app": "./src/app.ts",
     "./env": "./src/env.ts",
     "./services/search": "./src/services/search.ts",
-    "./services/embeddings": "./src/services/embeddings.ts"
+    "./services/embeddings": "./src/services/embeddings.ts",
+    "./services/llm": "./src/services/llm.ts"
   }
 }

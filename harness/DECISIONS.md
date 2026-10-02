@@ -120,3 +120,26 @@ Append-only. Format: number, date, decision, why, consequences. To reverse one, 
   key or a model id. The health response shape in §6 changed, so any client reading it must tolerate the extra
   field; both apps parse it loosely.
 
+## ADR-017 · 2026-10-02 · An automated relevance judge, and why its labels are not published as results
+- Decision: `eval/judge.ts` labels pooled jobs with the Gemini client already in the repository, against a fixed
+  versioned rubric per query type (`eval/rubric.ts`), caching verdicts by query id and job content hash. The
+  owner authorized this, superseding the rule that only the owner may label (ARCHITECTURE §8, TASKS T22).
+- Why an automated judge at all: hand labeling 50 queries over pools of 30 to 50 jobs is roughly 2,000
+  judgements, which is why the labels sat unfinished and the headline Recall@10 claim could not be made.
+- **The judge failed its own validation and its labels are therefore not reported as measured results.** On the
+  10 queries the owner labeled by hand, raw agreement is 78.5% but Cohen's kappa is -0.051, which is no better
+  than chance. The cause is visible in the label distribution: the owner marked 86.1% of pooled jobs relevant
+  and the judge 91.0%. When nearly everything in the pool is called relevant, raw agreement is almost
+  guaranteed and carries no information, and the metrics cannot separate the three search modes either, which
+  is the one question the evaluation exists to answer. Measured on the 14 queries judged so far, all three
+  modes land within 0.04 of each other on nDCG@10 (keyword 0.861, vector 0.855, hybrid 0.867).
+- Consequence: the tooling, the rubric, the metrics and the validation report are committed and
+  `eval/results.md` carries the full picture, kappa included. No Recall@10 or nDCG@10 figure goes into the
+  README until a label set passes validation. Fixing it means changing the evaluation design, not retrying the
+  judge: pool deeper than 20 per mode so clearly irrelevant jobs enter the pool, move to graded relevance
+  (0-3) instead of binary, or judge pairwise preferences between modes, which is robust to a lenient absolute
+  scale. A successor should treat this ADR as the record of a method that did not work, not as a recipe.
+- Second limit, unrelated to quality: the free Gemini tier allows 20 requests per day for this model, so only
+  14 of 50 queries are judged, and all 14 are exact-title queries, the easiest of the three types. Even a
+  working judge would need a paid key or several days to cover the set.
+
