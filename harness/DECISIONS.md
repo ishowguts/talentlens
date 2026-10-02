@@ -159,3 +159,24 @@ Append-only. Format: number, date, decision, why, consequences. To reverse one, 
   it would believe the deployment had been broken. It had not. The lesson worth keeping: verify a negative
   result with a second tool before acting on it, especially when it contradicts what the operator reports.
 
+## ADR-019 · 2026-10-03 · Moved to gemini-3.8-flash; ADR-012's thinking switch re-verified, not changed
+- Why: Google retired `gemini-2.5-flash` for new API keys, so production and `.env` now use `gemini-3.8-flash`.
+- ADR-012 turns thinking off to fit the 15 s `LLM_TIMEOUT_MS`, and that had to be re-checked rather than
+  assumed, because the parameter is model dependent. Measured against the new model with the same SDK (1.52.0):
+  - `thinkingConfig: { thinkingBudget: 0 }` works and genuinely disables thinking (`thoughtsTokenCount` 0).
+  - `thinkingConfig: { thinkingLevel: 'MINIMAL' }`, the newer spelling the SDK also offers, is **rejected**:
+    `400 INVALID_ARGUMENT, "Thinking level MINIMAL is not supported for this model"`. Switching to it would
+    have broken every call.
+  - With no thinking config at all the model thinks by default (`thoughtsTokenCount` 142 on a trivial prompt).
+  So the request config is unchanged. A future model may drop `thinkingBudget`; re-run this check before
+  assuming, and prefer the parameter the model accepts over the one that looks newer.
+- Verified end to end locally against the full 7,141-job corpus: three resume matches reranked in 4.0 s, 5.3 s
+  and 9.0 s, all inside the 15 s budget, with fit scores and grounded reasons. A fourth attempt hit a transient
+  `503 UNAVAILABLE` from the model and fell back to vector order with `reranked: false`, which is ADR-008
+  working as intended.
+- Consequence: `GEMINI_MODEL` still has **no default in code**, deliberately. A default model id is a value that
+  rots silently and then fails at the worst moment, which is exactly what a retirement does; both the key and
+  the model must be set explicitly or the LLM paths degrade by design. `.env.example` and ARCHITECTURE §9 name
+  the current id. Judge labels already in `eval/judge-labels.jsonl` record `gemini-2.5-flash` as the model that
+  produced them and are left as the historical record.
+

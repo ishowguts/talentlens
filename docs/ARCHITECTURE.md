@@ -56,7 +56,7 @@ flowchart LR
 | Database | PostgreSQL 16 + pgvector ≥ 0.8 locally (Docker); Supabase (PostgreSQL 17, pgvector 0.8) in prod, see ADR-015 |
 | ORM / migrations | Drizzle ORM + drizzle-kit; migrations generated from the schema, with raw SQL statements added to a generated file when Drizzle cannot express something |
 | Embeddings | `Xenova/all-MiniLM-L6-v2` via `@huggingface/transformers` (Transformers.js), 384-d, mean pooling, L2-normalized, runs in-process |
-| LLM | Gemini via `@google/genai`, JSON response mode, output validated with zod |
+| LLM | Gemini via `@google/genai`, JSON response mode, thinking disabled with `thinkingBudget: 0`, output validated with zod |
 | PDF text | `unpdf` |
 | Tests | Vitest + Supertest against a real Postgres (Docker, separate `talentlens_test` DB) |
 | CI | GitHub Actions: guard, lint, typecheck, test |
@@ -327,7 +327,7 @@ same table. One LLM call returns `{ rewrittenTitle, notes[] }` (zod-validated); 
 | `LOG_LEVEL` | api | `info` |
 | `EMBEDDING_MODEL` | api | `Xenova/all-MiniLM-L6-v2` |
 | `GEMINI_API_KEY` | api | (secret) |
-| `GEMINI_MODEL` | api | current Flash-tier model id |
+| `GEMINI_MODEL` | api | `gemini-3.8-flash` (no default in code; see ADR-019) |
 | `LLM_TIMEOUT_MS` | api | `15000` |
 | `ADZUNA_APP_ID`, `ADZUNA_APP_KEY` | ingest | (secret) |
 | `ADZUNA_COUNTRIES` | ingest | `in,gb,us` |

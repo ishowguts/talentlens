@@ -105,10 +105,10 @@ pnpm --filter web dev        # http://localhost:3000
 
 `GEMINI_API_KEY` and `GEMINI_MODEL` are optional: without them the resume match still works and returns results
 ranked by similarity alone, marked as such in the UI, and the job ad scorer still produces its full score,
-without the written suggestions. The live API has both set, but the key is on the free Gemini tier, which
-allows 20 requests a day for this model: once that is spent, the deployment falls back to similarity-only
-matches and an unannotated score until the quota resets. That is the designed behaviour, not a failure
-(see [ADR-008](harness/DECISIONS.md)). `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` are needed for the
+without the written suggestions. The live API has both set. The key is on a free Gemini tier with a daily
+request cap, so once that is spent the deployment falls back to similarity-only matches and an unannotated
+score until it resets, and a transient model outage does the same. That is the designed behaviour, not a
+failure (see [ADR-008](harness/DECISIONS.md)). The model is `gemini-3.8-flash` ([ADR-019](harness/DECISIONS.md)). `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` are needed for the
 Adzuna half of the corpus.
 
 Checks, the same ones CI runs:

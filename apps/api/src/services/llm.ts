@@ -25,7 +25,9 @@ export function createLlmClient(apiKey: string | undefined, model: string | unde
             responseMimeType: 'application/json',
             temperature: 0,
             // Thinking is off: with it on, a 20-job rerank prompt does not finish inside LLM_TIMEOUT_MS
-            // (15 s), so every rerank fell back to vector order. See ADR-012.
+            // (15 s), so every rerank fell back to vector order (ADR-012). Re-verified against
+            // gemini-3.8-flash, which accepts thinkingBudget but rejects thinkingLevel (ADR-019), so measure
+            // before changing this to a newer-looking parameter.
             thinkingConfig: { thinkingBudget: 0 },
           },
         }),

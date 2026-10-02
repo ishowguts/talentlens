@@ -34,9 +34,18 @@ continue from this file alone.
     `Access-Control-Allow-Origin` case-sensitively, while the header arrives lower-cased over HTTP/2. `curl -D -`
     showed it present all along. ADR-018 records the correction. Use `r.headers.get(...)`, which is
     case-insensitive, or curl.
-  - **The free Gemini tier allows 20 requests per day and 5 per minute for gemini-2.5-flash.** Once spent, the
-    live deployment falls back to similarity-only matches and an unannotated score, which is ADR-008 behaving
-    correctly, not a fault. It also means the judge cannot label more than a handful of queries a day.
+  - **The model is `gemini-3.8-flash`** (ADR-019); `gemini-2.5-flash` was retired for new keys. `thinkingBudget:
+    0` is still the right switch and `thinkingLevel: 'MINIMAL'` is rejected by this model, so do not "modernize"
+    that config without measuring.
+  - **Free-tier quotas bite.** On the retired model's key the limits were 20 requests per day and 5 per minute,
+    which is what stopped the judge at 14 of 50 queries. The new key's limits have not been measured. When the
+    quota is spent the deployment falls back to similarity-only matches and an unannotated score, which is
+    ADR-008 behaving correctly, not a fault. A transient `503 UNAVAILABLE` from the model produces the same
+    fallback and was seen once during the ADR-019 verification.
+  - **Two local traps cost time during the ADR-019 check, both worth remembering:** a stale dev server kept port
+    4000 and served the retired model, because the new one failed to start with `EADDRINUSE` and the failure was
+    only in its log (`lsof -ti tcp:4000 | xargs kill -9` first); and the resume hash cache replayed the failed
+    results instantly afterwards (`TRUNCATE matches, resumes;` before re-testing).
   - **The resume cache hides a model change.** `/api/match` replays a stored answer by resume text hash. Test
     with new text, or `TRUNCATE matches, resumes;` first.
   - **The free Render instance is slow at embedding**: live p50 keyword 102 ms, vector 730 ms, hybrid 757 ms,

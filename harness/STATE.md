@@ -47,7 +47,7 @@ Only measured values, each with the command that produced it and the commit.
 | p50 latency keyword / vector / hybrid | 1.3 ms / 8.7 ms / 14.4 ms (means 2.4 / 10.3 / 20.6 ms; 50 queries, 7,141 jobs, warm, local Docker Postgres) | `pnpm eval` | 71d3289 |
 | Endpoint tests | 131 tests, 16 files, all green | `pnpm test` | e055972 |
 | Search latency on the live API, p50 | keyword 102 ms · vector 730 ms · hybrid 757 ms server-side (total from a laptop in another region: 443 / 1,037 / 1,056 ms). 10 queries per mode, warm. Far above the local figures because query embedding runs on a free Render instance with a throttled shared CPU; the database round trip (Singapore to Tokyo) accounts for the keyword number | 10 queries per mode against `/api/search`, after a warm-up request per mode | 1456ac4 |
-| Resume match latency, with rerank | 7.5 s end to end (PDF upload, 10 results, gemini-2.5-flash, thinking off) | `curl -X POST /api/match -F file=@apps/api/test/fixtures/resume.pdf` | f038a32 |
+| Resume match latency, with rerank | 4.0 / 5.3 / 9.0 s over three local runs on the 7,141-job corpus (gemini-3.8-flash, thinking off), all inside the 15 s timeout; 7.5 s previously on the retired gemini-2.5-flash | `POST /api/match` with fresh resume text, local API | pending |
 
 ## Live URLs
 
