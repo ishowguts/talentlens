@@ -29,7 +29,7 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T21 | Match + scorer UI | done (2026-10-02, 5bc3e70) |
 | T22 | Evaluation tooling | in-progress · tooling done (71d3289) and the automated judge added (ADR-017), but its labels failed validation (kappa -0.051) and only 14 of 50 queries are judged (free-tier daily cap), so no quality number is published |
 | T23 | Test coverage pass | done (2026-10-02, e055972) |
-| T24 | Deploy | done (2026-10-03, pending) |
+| T24 | Deploy | done (2026-10-03, 0bb8878) |
 | T25 | README | done (2026-10-02, a185bd2) · both live links are in it; the demo GIF is the owner's to record |
 
 ## Measurements
