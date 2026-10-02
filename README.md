@@ -1,5 +1,7 @@
 # TalentLens
 
+![TalentLens: searching, opening a job and matching a resume](docs/demo.gif)
+
 Semantic job search and resume matcher over 7,141 real job postings. Keyword search, vector search, and the two
 fused with Reciprocal Rank Fusion, so the three can be compared on the same query. Upload a resume and get ranked
 jobs with grounded explanations of fit and missing skills.
