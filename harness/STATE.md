@@ -29,7 +29,7 @@ Status values: `todo` · `in-progress` · `blocked (reason)` · `done (YYYY-MM-D
 | T21 | Match + scorer UI | done (2026-10-02, 5bc3e70) |
 | T22 | Evaluation tooling | done (2026-10-02, 71d3289) · Recall/MRR await the owner labeling the 50 queries |
 | T23 | Test coverage pass | done (2026-10-02, e055972) |
-| T24 | Deploy | in-progress (production database loaded and verified; Render and Vercel still need the owner) |
+| T24 | Deploy | in-progress (API and database live and verified end to end; the web URL has not been supplied, and the model key is not set on Render) |
 | T25 | README | done (2026-10-02, a185bd2) · the live link and the demo GIF wait on T24 |
 
 ## Measurements
@@ -45,12 +45,18 @@ Only measured values, each with the command that produced it and the commit.
 | MRR@10 keyword / vector / hybrid | — (needs the owner to label `eval/queries.jsonl`) | `pnpm --filter eval label` then `pnpm eval` | |
 | p50 latency keyword / vector / hybrid | 1.3 ms / 8.7 ms / 14.4 ms (means 2.4 / 10.3 / 20.6 ms; 50 queries, 7,141 jobs, warm, local Docker Postgres) | `pnpm eval` | 71d3289 |
 | Endpoint tests | 131 tests, 16 files, all green | `pnpm test` | e055972 |
+| Search latency on the live API, p50 | keyword 102 ms · vector 730 ms · hybrid 757 ms server-side (total from a laptop in another region: 443 / 1,037 / 1,056 ms). 10 queries per mode, warm. Far above the local figures because query embedding runs on a free Render instance with a throttled shared CPU; the database round trip (Singapore to Tokyo) accounts for the keyword number | 10 queries per mode against `/api/search`, after a warm-up request per mode | 1456ac4 |
 | Resume match latency, with rerank | 7.5 s end to end (PDF upload, 10 results, gemini-2.5-flash, thinking off) | `curl -X POST /api/match -F file=@apps/api/test/fixtures/resume.pdf` | f038a32 |
 
 ## Live URLs
 
-- Web: — (Vercel not created yet)
-- API: — (Render not created yet)
+- Web: — (deployed by the owner, but the URL has not reached this repository yet, so nothing is recorded)
+- API: <https://talentlens-api-k0rp.onrender.com> (Render, `singapore`). Verified 2026-10-02 end to end:
+  `/api/health` reports `db: "ok"` and `jobs: 7141`; `/api/stats` matches the corpus; all three search modes
+  return ranked results with the expected rank badges; `/api/jobs/:id` returns a full posting with its source
+  and link; `/api/search/click` returns 204; a missing job gives 404 and an empty query 400 in the documented
+  error shape; `/api/match` returns 10 results; `/api/jobs/score` scores a deliberately bad advert 10 and flags
+  five terms.
 - Database: Supabase, PostgreSQL 17.11, ap-northeast-1 (Tokyo), session pooler. Loaded 2026-10-02 from the local
   container with `pg_dump | psql` (ADR-014). The connection string lives only in `.env` as `DATABASE_URL_PROD`.
   Verified against local: jobs 7,141, companies 3,124, job_embeddings 7,141 (384 dimensions), resumes 1,

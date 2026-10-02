@@ -345,6 +345,10 @@ URL parser may split at the first `@` and silently connect to whatever follows i
 
 ## 12. Performance budgets (measure, record in STATE)
 
+These budgets describe a warm instance with a CPU that is not throttled, which in practice means local
+development. The free Render instance embeds a query several times more slowly, so the vector and hybrid budgets
+do not hold there; STATE records both sets of numbers.
+
 | Path | Budget (p50, warm, 5k jobs) |
 | --- | --- |
 | keyword search | < 50 ms |

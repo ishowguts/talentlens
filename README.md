@@ -7,9 +7,13 @@ jobs with grounded explanations of fit and missing skills.
 Next.js 14 · Node.js + Express (TypeScript, strict) · PostgreSQL 16 + pgvector (HNSW) · local MiniLM embeddings ·
 Gemini for reranking, with a deterministic fallback.
 
-**Status:** the API, the web app and the evaluation tooling work locally. Not deployed yet, and the 50 evaluation
-queries are not labeled yet, so no Recall@10 number is published. Design: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-Progress and every measured number: [harness/STATE.md](harness/STATE.md).
+**Status:** the API is live at <https://talentlens-api-k0rp.onrender.com> (try
+[`/api/health`](https://talentlens-api-k0rp.onrender.com/api/health) or
+[`/api/search?q=senior+react+developer`](https://talentlens-api-k0rp.onrender.com/api/search?q=senior+react+developer)),
+serving the full 7,141-job corpus from a managed Postgres in Tokyo. The web app is deployed separately; its link
+goes here once recorded. The 50 evaluation queries are not labeled yet, so no Recall@10 number is published.
+Design: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Progress and every measured number:
+[harness/STATE.md](harness/STATE.md).
 
 ## What it does
 
@@ -64,9 +68,15 @@ Every number here was produced by a command in this repository. Nothing is estim
 | Jobs embedded | 7,141 of 7,141 | `pnpm --filter api embed` |
 | Embedding rate | 28.3 s per 1,000 jobs (CPU, fp32) | `pnpm --filter api embed` |
 | Embedding cache on re-run | 7,141 skipped, 0 re-embedded | `pnpm --filter api embed` twice |
-| Search latency, p50 | keyword 1.3 ms · vector 8.7 ms · hybrid 14.4 ms | `pnpm eval` |
-| Search latency, mean | keyword 2.4 ms · vector 10.3 ms · hybrid 20.6 ms | `pnpm eval` |
+| Search latency, p50, local | keyword 1.3 ms · vector 8.7 ms · hybrid 14.4 ms | `pnpm eval` |
+| Search latency, mean, local | keyword 2.4 ms · vector 10.3 ms · hybrid 20.6 ms | `pnpm eval` |
+| Search latency, p50, live API | keyword 102 ms · vector 730 ms · hybrid 757 ms | 10 queries per mode against `/api/search` |
 | Resume match, end to end | 7.5 s with the LLM rerank, 10 results | `POST /api/match` |
+
+The live figures are much higher than the local ones for one reason: embedding the query runs on a free instance
+with a throttled shared CPU. The keyword number, which does no embedding, is mostly the round trip from the API
+in Singapore to the database in Tokyo. The local numbers are what the design is budgeted against
+([ARCHITECTURE §12](docs/ARCHITECTURE.md)); the live numbers are what a free tier delivers.
 
 Recall@10 and MRR@10 for the three modes are **not published yet**: the 50 queries in `eval/queries.jsonl` need
 relevance judgements, which are made by hand (`pnpm --filter eval label`). `pnpm eval` writes
@@ -89,7 +99,9 @@ pnpm --filter web dev        # http://localhost:3000
 ```
 
 `GEMINI_API_KEY` and `GEMINI_MODEL` are optional: without them the resume match still works and returns results
-ranked by similarity alone, marked as such in the UI. `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` are needed for the
+ranked by similarity alone, marked as such in the UI, and the job ad scorer still produces its full score,
+without the written suggestions. The live API currently runs without them, so it returns similarity-only
+matches. `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` are needed for the
 Adzuna half of the corpus.
 
 Checks, the same ones CI runs:
