@@ -30,12 +30,33 @@ const csv = (value: string) =>
     .map((part) => part.trim())
     .filter(Boolean);
 
+/**
+ * An origin as a browser sends it: scheme and host, lower case, no trailing slash and no path.
+ * Configured values are normalized the same way, so "https://app.example.com/" in the environment still
+ * matches the "https://app.example.com" a browser puts in the Origin header.
+ */
+export function normalizeOrigin(value: string): string {
+  const trimmed = value.trim().replace(/\/+$/, '');
+  try {
+    return new URL(trimmed).origin.toLowerCase();
+  } catch {
+    return trimmed.toLowerCase();
+  }
+}
+
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   DATABASE_URL: postgresUrl('DATABASE_URL'),
   DATABASE_URL_TEST: postgresUrl('DATABASE_URL_TEST').optional(),
   PORT: z.coerce.number().int().positive().default(4000),
-  CORS_ORIGINS: z.string().default('http://localhost:3000').transform(csv),
+  // An empty value would otherwise parse to an empty allowlist, which silently refuses every browser.
+  CORS_ORIGINS: z
+    .string()
+    .default('http://localhost:3000')
+    .transform((value) => csv(value).map(normalizeOrigin))
+    .refine((origins) => origins.length > 0, {
+      message: 'CORS_ORIGINS is empty. List at least one origin, for example https://your-app.vercel.app',
+    }),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   EMBEDDING_MODEL: z.string().min(1).default('Xenova/all-MiniLM-L6-v2'),
   // The LLM is optional: without a key and a model the reranker and the scorer notes fall back (ADR-008).

@@ -191,7 +191,7 @@ with codes `VALIDATION_ERROR` (400), `NOT_FOUND` (404), `PAYLOAD_TOO_LARGE` (413
 
 | Method & path | Request | Response |
 | --- | --- | --- |
-| `GET /health` | — | `{ status: "ok", db: "ok"\|"down", embeddingModel, jobs: number }` |
+| `GET /health` | — | `{ status: "ok", db: "ok"\|"down", embeddingModel, llm: "configured"\|"not configured", jobs: number }` |
 | `GET /search` | query: `q` (1–200 chars, required), `mode` = `hybrid`\|`vector`\|`keyword` (default `hybrid`), `remote` (bool), `country` (ISO-2), `salaryMin` (int), `page` (≥1), `pageSize` (1–50, default 20) | `{ results: [{ job: JobSummary, score: number, ranks: { keyword: number\|null, vector: number\|null } }], page, pageSize, hasMore, logId, latencyMs }` |
 | `POST /search/click` | `{ logId: number, jobId: number }` | `204` |
 | `GET /jobs/:id` | — | `Job` (full description, url, source) |
@@ -203,6 +203,11 @@ with codes `VALIDATION_ERROR` (400), `NOT_FOUND` (404), `PAYLOAD_TOO_LARGE` (413
 All request/response schemas are defined once in `packages/shared` and imported by both apps.
 
 Rate limits (per IP, express-rate-limit, in-memory store): `/search` 60/min, `/match` 5/min, `/jobs/score` 10/min.
+
+`CORS_ORIGINS` is an allowlist. Both the configured values and the inbound `Origin` header are normalized to
+scheme-and-host, lower case, without a trailing slash, so `https://app.example.com/` in the environment still
+matches what a browser sends. An empty `CORS_ORIGINS` is rejected at boot rather than refusing every browser
+silently. `GET /health` reports whether a reranking model is configured, never any key or model id.
 
 ## 7. Core flows
 

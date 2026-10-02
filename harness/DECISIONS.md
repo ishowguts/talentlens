@@ -107,3 +107,16 @@ Append-only. Format: number, date, decision, why, consequences. To reverse one, 
   (see §11). This supersedes the Neon half of ADR-002; the reason for choosing Postgres with pgvector over a
   separate vector database is unchanged.
 
+## ADR-016 · 2026-10-02 · Origins are normalized, an empty allowlist is fatal, and /health reports model configuration
+- Why: on the first full deployment the API returned no `Access-Control-Allow-Origin` for any origin, so every
+  browser request from the web app was blocked while the server-rendered pages kept working, which made it look
+  like the app was fine. Two causes were possible and neither was visible from outside: a configured origin that
+  does not match the header byte for byte (a trailing slash is the usual culprit), or an empty `CORS_ORIGINS`,
+  which `csv()` turned into an empty allowlist that refuses everyone. Separately, there was no way to tell from
+  outside whether the reranking model was configured: a missing key and a failing call both end in
+  `reranked: false`, by design (ADR-008).
+- Consequence: the allowlist compares normalized origins, an empty `CORS_ORIGINS` fails at boot with a message
+  naming the variable, and `GET /health` carries `llm: "configured" | "not configured"` — presence only, never a
+  key or a model id. The health response shape in §6 changed, so any client reading it must tolerate the extra
+  field; both apps parse it loosely.
+

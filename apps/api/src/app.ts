@@ -4,7 +4,7 @@ import express from 'express';
 import helmet from 'helmet';
 import { pinoHttp } from 'pino-http';
 import type { Database } from 'db';
-import type { Env } from './env.js';
+import { normalizeOrigin, type Env } from './env.js';
 import { getEmbedder } from './services/embeddings.js';
 import type { Embedder } from './services/embeddings.js';
 import { createLlmClient, type LlmClient } from './services/llm.js';
@@ -48,16 +48,22 @@ export function createApp({
     }),
   );
   app.use(helmet());
+  const allowedOrigins = new Set(env.CORS_ORIGINS);
   app.use(
     cors({
-      origin: env.CORS_ORIGINS,
+      // Compared after normalization, so a trailing slash in the environment is not a silent outage.
+      origin: (origin, callback) => {
+        // Server-to-server and same-origin requests send no Origin header.
+        if (!origin) return callback(null, true);
+        callback(null, allowedOrigins.has(normalizeOrigin(origin)));
+      },
       methods: ['GET', 'POST'],
       maxAge: 86_400,
     }),
   );
   app.use(express.json({ limit: '1mb' }));
 
-  app.use('/api', healthRouter(db, env));
+  app.use('/api', healthRouter(db, env, llm));
   app.use('/api', jobsRouter(db, { llm, llmTimeoutMs: env.LLM_TIMEOUT_MS }, limits.score));
   app.use('/api', searchRouter({ db, embedder }, limits.search));
   app.use('/api', matchRouter({ db, embedder, llm, llmTimeoutMs: env.LLM_TIMEOUT_MS }, limits.match));

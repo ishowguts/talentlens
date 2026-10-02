@@ -10,8 +10,8 @@ Gemini for reranking, with a deterministic fallback.
 **Status:** the API is live at <https://talentlens-api-k0rp.onrender.com> (try
 [`/api/health`](https://talentlens-api-k0rp.onrender.com/api/health) or
 [`/api/search?q=senior+react+developer`](https://talentlens-api-k0rp.onrender.com/api/search?q=senior+react+developer)),
-serving the full 7,141-job corpus from a managed Postgres in Tokyo. The web app is deployed separately; its link
-goes here once recorded. The 50 evaluation queries are not labeled yet, so no Recall@10 number is published.
+serving the full 7,141-job corpus from a managed Postgres in Tokyo. The web app is live at
+<https://talentlens-silk.vercel.app>. The 50 evaluation queries are not labeled yet, so no Recall@10 number is published.
 Design: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Progress and every measured number:
 [harness/STATE.md](harness/STATE.md).
 
