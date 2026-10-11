@@ -8,9 +8,9 @@ export function formatSalary(min: number | null, max: number | null, currency: s
       maximumFractionDigits: 0,
     }).format(value);
 
-  if (min !== null && max !== null && max > min) return `${format(min)} – ${format(max)}`;
-  const single = min ?? max;
-  return single === null ? null : `from ${format(single)}`;
+  if (min === null) return `up to ${format(max!)}`;
+  if (max === null) return `from ${format(min)}`;
+  return max > min ? `${format(min)} – ${format(max)}` : format(min);
 }
 
 /** "3 days ago", or null when the source gave no date. */

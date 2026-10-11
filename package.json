@@ -16,8 +16,9 @@
     "format:check": "prettier --check .",
     "typecheck": "pnpm -r --if-present typecheck",
     "build": "pnpm -r --if-present build",
-    "test": "pnpm -r --if-present test",
-    "eval": "pnpm --filter eval start"
+    "test": "pnpm test:web && pnpm -r --if-present test",
+    "eval": "pnpm --filter eval start",
+    "test:web": "pnpm --filter api exec node --import tsx ../web/test/format.check.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",

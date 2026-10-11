@@ -36,7 +36,7 @@ export default async function JobPage({ params }: { params: { id: string } }) {
         <p className="text-stone-600">
           {job.company}
           {job.location ? ` · ${job.location}` : ''}
-          {job.isRemote ? ' · Remote' : ''}
+          {job.isRemote && job.location?.trim().toLowerCase() !== 'remote' ? ' · Remote' : ''}
           {job.country ? ` · ${job.country}` : ''}
         </p>
         <p className="flex flex-wrap gap-x-3 text-sm text-stone-500">

@@ -10,13 +10,17 @@ export default function MatchPage() {
 
   return (
     <div className="space-y-6">
-      <section className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Match a resume to jobs</h1>
-        <p className="text-stone-600">
+      <section className="page-header">
+        <h1 className="page-title">Match a resume to jobs</h1>
+        <p className="page-description">
           Find roles that fit your experience and see which requested skills are missing from your resume.
         </p>
       </section>
 
+      <p className="text-xs leading-relaxed text-stone-500">
+        Your resume text, its numerical representation, and match results are stored so repeat uploads can
+        reuse earlier results.
+      </p>
       <ResumeUpload onMatched={setResponse} />
 
       {response && (
@@ -35,11 +39,6 @@ export default function MatchPage() {
               <MatchResultCard key={match.job.id} match={match} position={index + 1} />
             ))}
           </ul>
-
-          <p className="text-xs text-stone-500">
-            Your resume text, its numerical representation, and match results are stored so repeat uploads can
-            reuse earlier results.
-          </p>
         </section>
       )}
     </div>

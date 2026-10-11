@@ -20,3 +20,5 @@ Include a regression check for behavior changes. Keep secrets out of source cont
 
 [Architecture](docs/ARCHITECTURE.md) describes the contracts; [decisions](docs/DECISIONS.md) records their trade-offs.
 Preserve the evaluation limitations and the commands behind published results.
+
+The salary display regression check runs without a database: `pnpm test:web`.

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { searchModeSchema, type SearchResponse } from 'shared';
 import { ApiRequestError, searchJobs } from '../lib/api';
 import { Pagination } from '../components/Pagination';
@@ -59,9 +60,16 @@ export default async function SearchPage({ searchParams }: { searchParams: RawPa
 
   return (
     <div className="space-y-6">
-      <section className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Find your next role</h1>
-        <p className="text-stone-600">Search by job title, skills, or the kind of work you want to do.</p>
+      <section className="page-header">
+        <p className="eyebrow">A closer look at your next role</p>
+        <h1 className="page-title">
+          Good work starts
+          <br className="hidden sm:block" /> with the right fit.
+        </h1>
+        <p className="page-description">
+          Search real job postings by title, skills, or the work you want to do. Compare exact keywords with
+          matches based on meaning.
+        </p>
       </section>
 
       <SearchForm values={values} />
@@ -73,22 +81,54 @@ export default async function SearchPage({ searchParams }: { searchParams: RawPa
       )}
 
       {!values.q && !error && (
-        <p className="text-sm text-stone-600">
-          Try “senior react developer”, “build data pipelines in python”, or “remote frontend engineer”.
-        </p>
+        <div className="space-y-10 pt-2">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+            <span className="text-stone-500">Try a search</span>
+            <Link className="quiet-link" href="/?q=senior+react+developer">
+              Senior React developer
+            </Link>
+            <Link className="quiet-link" href="/?q=data+pipelines+python">
+              Data pipelines in Python
+            </Link>
+            <Link className="quiet-link" href="/?q=frontend+engineer&remote=true">
+              Remote frontend roles
+            </Link>
+          </div>
+          <div className="grid gap-8 border-t border-stone-300/70 pt-8 sm:grid-cols-2">
+            <section className="space-y-2">
+              <h2 className="text-lg font-semibold">Start with your experience.</h2>
+              <p className="text-sm leading-relaxed text-stone-600">
+                Use your resume to find relevant roles and see which requested skills it does not yet show.
+              </p>
+              <Link className="quiet-link inline-block pt-2" href="/match">
+                Match a resume <span aria-hidden="true">↗</span>
+              </Link>
+            </section>
+            <section className="space-y-2">
+              <h2 className="text-lg font-semibold">Hiring for a role?</h2>
+              <p className="text-sm leading-relaxed text-stone-600">
+                Check an advert for useful details, clear requirements, and wording that may discourage
+                applicants.
+              </p>
+              <Link className="quiet-link inline-block pt-2" href="/score">
+                Review a job advert <span aria-hidden="true">↗</span>
+              </Link>
+            </section>
+          </div>
+        </div>
       )}
 
       {response && (
         <>
-          <p className="text-sm text-stone-500">
+          <p role="status" className="border-b border-stone-300/70 pb-4 text-sm text-stone-500">
             {response.results.length === 0
               ? 'No jobs matched.'
-              : `Showing ${response.results.length} ${values.mode} results in ${response.latencyMs} ms.`}
+              : `Showing ${response.results.length} ${response.results.length === 1 ? 'job' : 'jobs'} · ${response.latencyMs} ms`}
           </p>
 
           {response.results.length === 0 ? (
-            <p className="text-sm text-stone-600">
-              Try fewer filters, or switch to hybrid mode, which also matches on meaning.
+            <p className="empty-note">
+              Try fewer filters, or choose Keywords + meaning to include related roles.
             </p>
           ) : (
             <ul className="space-y-3">

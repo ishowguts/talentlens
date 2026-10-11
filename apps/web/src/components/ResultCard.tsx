@@ -12,8 +12,8 @@ export function ResultCard({ result, logId }: { result: SearchResult; logId: num
   const posted = formatPostedAt(job.postedAt);
 
   return (
-    <li className="rounded-lg border border-stone-200 bg-white p-4">
-      <div className="flex items-start justify-between gap-3">
+    <li className="job-result">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <h3 className="font-medium">
           <Link href={`/jobs/${job.id}`} onClick={() => logClick(logId, job.id)} className="hover:underline">
             {job.title}
@@ -22,12 +22,12 @@ export function ResultCard({ result, logId }: { result: SearchResult; logId: num
         <div className="flex shrink-0 gap-1 text-xs">
           {ranks.keyword !== null && (
             <span className="rounded bg-amber-100 px-1.5 py-0.5 text-amber-900" title="Keyword rank">
-              kw #{ranks.keyword}
+              Keyword #{ranks.keyword}
             </span>
           )}
           {ranks.vector !== null && (
             <span className="rounded bg-sky-100 px-1.5 py-0.5 text-sky-900" title="Vector rank">
-              vec #{ranks.vector}
+              Meaning #{ranks.vector}
             </span>
           )}
         </div>
@@ -36,7 +36,7 @@ export function ResultCard({ result, logId }: { result: SearchResult; logId: num
       <p className="mt-0.5 text-sm text-stone-600">
         {job.company}
         {job.location ? ` · ${job.location}` : ''}
-        {job.isRemote ? ' · Remote' : ''}
+        {job.isRemote && job.location?.trim().toLowerCase() !== 'remote' ? ' · Remote' : ''}
       </p>
 
       <p className="mt-2 text-sm text-stone-700">{job.snippet}</p>

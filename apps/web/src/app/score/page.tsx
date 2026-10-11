@@ -46,9 +46,9 @@ export default function ScorePage() {
 
   return (
     <div className="space-y-6">
-      <section className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Score a job advert</h1>
-        <p className="text-stone-600">
+      <section className="page-header">
+        <h1 className="page-title">Score a job advert</h1>
+        <p className="page-description">
           Check your advert for clarity, useful details, and wording that may put candidates off. The score
           uses seven fixed checks; writing suggestions are optional.
         </p>

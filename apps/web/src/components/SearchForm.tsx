@@ -17,7 +17,7 @@ const MODE_HINT: Record<SearchMode, string> = {
 /** A plain GET form: the URL holds the whole query, so results are shareable and need no client state. */
 export function SearchForm({ values }: { values: SearchFormValues }) {
   return (
-    <form method="get" action="/" className="space-y-3 rounded-lg border border-stone-200 bg-white p-4">
+    <form method="get" action="/" className="search-panel">
       <div className="flex flex-col gap-2 sm:flex-row">
         <input
           type="search"
@@ -26,24 +26,27 @@ export function SearchForm({ values }: { values: SearchFormValues }) {
           placeholder="Job title, skill, or type of work"
           aria-label="Search jobs"
           maxLength={200}
-          className="flex-1 rounded-md border border-stone-300 px-3 py-2 outline-none focus:border-stone-500"
+          className="search-input"
         />
-        <button type="submit" className="rounded-md bg-stone-900 px-4 py-2 text-white hover:bg-stone-700">
+        <button type="submit" className="primary-button">
           Search
         </button>
       </div>
 
       <div className="flex flex-wrap items-center gap-4 text-sm">
-        <fieldset className="flex items-center gap-3">
+        <fieldset className="search-modes">
           <legend className="sr-only">Search mode</legend>
           {SEARCH_MODES.map((mode) => (
-            <label key={mode} className="flex items-center gap-1.5" title={MODE_HINT[mode]}>
+            <label key={mode} className="search-mode" title={MODE_HINT[mode]}>
               <input type="radio" name="mode" value={mode} defaultChecked={values.mode === mode} />
-              <span className="capitalize">{mode}</span>
+              <span>
+                {mode === 'hybrid' ? 'Keywords + meaning' : mode === 'vector' ? 'Meaning' : 'Keywords'}
+              </span>
             </label>
           ))}
         </fieldset>
-
+      </div>
+      <div className="filter-row">
         <label className="flex items-center gap-1.5">
           <input type="checkbox" name="remote" value="true" defaultChecked={values.remote} />
           Remote only
@@ -74,7 +77,10 @@ export function SearchForm({ values }: { values: SearchFormValues }) {
         </label>
       </div>
 
-      <p className="text-xs text-stone-500">{MODE_HINT[values.mode]}</p>
+      <p className="text-xs leading-relaxed text-stone-500">
+        Keywords match the advert’s wording. Meaning also finds related roles. Combine both to compare their
+        rankings.
+      </p>
     </form>
   );
 }

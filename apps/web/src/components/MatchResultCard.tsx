@@ -7,8 +7,8 @@ export function MatchResultCard({ match, position }: { match: MatchResult; posit
   const salary = formatSalary(match.job.salaryMin, match.job.salaryMax, match.job.salaryCurrency);
 
   return (
-    <li className="rounded-lg border border-stone-200 bg-white p-4">
-      <div className="flex items-start justify-between gap-3">
+    <li className="job-result">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="font-medium">
             <Link href={`/jobs/${match.job.id}`} className="hover:underline">
@@ -18,7 +18,7 @@ export function MatchResultCard({ match, position }: { match: MatchResult; posit
           <p className="mt-0.5 text-sm text-stone-600">
             {match.job.company}
             {match.job.location ? ` · ${match.job.location}` : ''}
-            {match.job.isRemote ? ' · Remote' : ''}
+            {match.job.isRemote && match.job.location?.trim().toLowerCase() !== 'remote' ? ' · Remote' : ''}
           </p>
         </div>
         <div className="shrink-0 text-right">
