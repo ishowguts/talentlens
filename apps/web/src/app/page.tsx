@@ -46,7 +46,7 @@ export default async function SearchPage({ searchParams }: { searchParams: RawPa
           ? caught.code === 'RATE_LIMITED'
             ? 'Too many searches in the last minute. Wait a moment and try again.'
             : caught.message
-          : 'The search API could not be reached. Is it running on port 4000?';
+          : 'Search is temporarily unavailable. Please try again in a moment.';
     }
   }
 
@@ -60,10 +60,8 @@ export default async function SearchPage({ searchParams }: { searchParams: RawPa
   return (
     <div className="space-y-6">
       <section className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Semantic job search</h1>
-        <p className="text-stone-600">
-          Keyword search, vector search, or both fused by rank. Compare the modes on the same query.
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">Find your next role</h1>
+        <p className="text-stone-600">Search by job title, skills, or the kind of work you want to do.</p>
       </section>
 
       <SearchForm values={values} />
@@ -76,8 +74,7 @@ export default async function SearchPage({ searchParams }: { searchParams: RawPa
 
       {!values.q && !error && (
         <p className="text-sm text-stone-600">
-          Try “senior react developer”, “build data pipelines in python”, or “frontend role that pays well,
-          remote”.
+          Try “senior react developer”, “build data pipelines in python”, or “remote frontend engineer”.
         </p>
       )}
 

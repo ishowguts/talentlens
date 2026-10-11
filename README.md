@@ -2,20 +2,19 @@
 
 ![TalentLens: searching, opening a job and matching a resume](docs/demo.gif)
 
-Semantic job search and resume matcher over 7,141 real job postings. Keyword search, vector search, and the two
-fused with Reciprocal Rank Fusion, so the three can be compared on the same query. Upload a resume and get ranked
+Job search and resume matching with keyword, vector, and hybrid retrieval.
+Hybrid search combines keyword and vector rankings with Reciprocal Rank Fusion. Upload a resume and get ranked
 jobs with grounded explanations of fit and missing skills.
 
 Next.js 14 · Node.js + Express (TypeScript, strict) · PostgreSQL 16 + pgvector (HNSW) · local MiniLM embeddings ·
 Gemini for reranking, with a deterministic fallback.
 
-**Status:** the API is live at <https://talentlens-api-k0rp.onrender.com> (try
-[`/api/health`](https://talentlens-api-k0rp.onrender.com/api/health) or
-[`/api/search?q=senior+react+developer`](https://talentlens-api-k0rp.onrender.com/api/search?q=senior+react+developer)),
-serving the full 7,141-job corpus from a managed Postgres in Tokyo. The web app is live at
-<https://talentlens-silk.vercel.app>. The 50 evaluation queries are not labeled yet, so no Recall@10 number is published.
-Design: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Progress and every measured number:
-[harness/STATE.md](harness/STATE.md).
+**Demo:** [web app](https://talentlens-silk.vercel.app) · [API health](https://talentlens-api-k0rp.onrender.com/api/health).
+The API may take a while to wake after being idle. The recorded corpus contains 7,141 postings; it is a snapshot, not a continuously refreshed job feed.
+
+Search-quality evaluation remains unresolved: the current relevance labels failed validation.
+See [evaluation results](eval/results.md), [architecture](docs/ARCHITECTURE.md), and the
+[dated measurement record](docs/MEASUREMENTS.md).
 
 ## What it does
 
@@ -24,6 +23,7 @@ Design: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Progress and every measure
 - **Resume match** (`/match`) — drop a PDF or paste text. The resume is chunked, embedded, compared against every
   posting, and the top 20 are reranked by an LLM into 10 results with a fit score, reasons, and the skills the
   posting asks for that the resume does not show.
+- **Job ad score** (`/score`) — check an advert against seven fixed rules, with optional wording suggestions.
 - **Job detail** (`/jobs/[id]`) — the full posting, salary, source credit and a link to the original advert.
 
 ## Architecture
@@ -56,13 +56,14 @@ flowchart LR
   MATCH --> LLM
 ```
 
-Design decisions and their trade-offs are in [harness/DECISIONS.md](harness/DECISIONS.md): Postgres instead of a
+Design decisions and their trade-offs are in [docs/DECISIONS.md](docs/DECISIONS.md): Postgres instead of a
 separate vector database, HNSW instead of exact search, RRF instead of score blending, and why LLM output is
 treated as untrusted input.
 
 ## Measured results
 
-Every number here was produced by a command in this repository. Nothing is estimated.
+The following timings are historical runs from October 2026, not current service guarantees.
+Hardware, model availability, and hosting affect the result.
 
 | Metric | Value | Command |
 | --- | --- | --- |
@@ -75,7 +76,7 @@ Every number here was produced by a command in this repository. Nothing is estim
 | Search latency, p50, live API | keyword 102 ms · vector 730 ms · hybrid 757 ms | 10 queries per mode against `/api/search` |
 | Resume match, end to end | 7.5 s with the LLM rerank, 10 results | `POST /api/match` |
 
-The live figures are much higher than the local ones for one reason: embedding the query runs on a free instance
+The recorded live figures are higher than the local ones: embedding the query runs on a free instance
 with a throttled shared CPU. The keyword number, which does no embedding, is mostly the round trip from the API
 in Singapore to the database in Tokyo. The local numbers are what the design is budgeted against
 ([ARCHITECTURE §12](docs/ARCHITECTURE.md)); the live numbers are what a free tier delivers.
@@ -94,23 +95,21 @@ would have to change in the evaluation design to fix it.
 Requirements: Node.js 20, pnpm, Docker.
 
 ```sh
-sh scripts/setup.sh          # pins the commit identity, enables the guard hooks
-pnpm install
+pnpm install --frozen-lockfile
 docker compose up -d         # PostgreSQL 16 + pgvector
 cp .env.example .env         # then fill it in
 pnpm --filter db migrate
 pnpm --filter api ingest     # fetches jobs; takes about 9 minutes for the full corpus
 pnpm --filter api embed      # embeds everything new; about 28 s per 1,000 jobs
 pnpm --filter api dev        # http://localhost:4000
-pnpm --filter web dev        # http://localhost:3000
+pnpm --filter web dev        # http://localhost:3000; run in a second terminal
 ```
 
 `GEMINI_API_KEY` and `GEMINI_MODEL` are optional: without them the resume match still works and returns results
 ranked by similarity alone, marked as such in the UI, and the job ad scorer still produces its full score,
-without the written suggestions. The live API has both set. The key is on a free Gemini tier with a daily
-request cap, so once that is spent the deployment falls back to similarity-only matches and an unannotated
-score until it resets, and a transient model outage does the same. That is the designed behaviour, not a
-failure (see [ADR-008](harness/DECISIONS.md)). The model is `gemini-3.8-flash` ([ADR-019](harness/DECISIONS.md)). `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` are needed for the
+without the written suggestions. Model errors or exhausted quotas trigger the same fallback
+([ADR-008](docs/DECISIONS.md)). Set `GEMINI_MODEL` to a model available to your key;
+[ADR-019](docs/DECISIONS.md) records the model used in the original run. `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` are needed for the
 Adzuna half of the corpus.
 
 Checks, the same ones CI runs:
@@ -119,7 +118,7 @@ Checks, the same ones CI runs:
 pnpm lint && pnpm typecheck && pnpm test
 ```
 
-Full command list: [AGENTS.md](AGENTS.md#commands).
+Development checks and contribution notes: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Data sources
 

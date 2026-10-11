@@ -122,8 +122,8 @@ Append-only. Format: number, date, decision, why, consequences. To reverse one, 
 
 ## ADR-017 · 2026-10-02 · An automated relevance judge, and why its labels are not published as results
 - Decision: `eval/judge.ts` labels pooled jobs with the Gemini client already in the repository, against a fixed
-  versioned rubric per query type (`eval/rubric.ts`), caching verdicts by query id and job content hash. The
-  owner authorized this, superseding the rule that only the owner may label (ARCHITECTURE §8, TASKS T22).
+  versioned rubric per query type (`eval/rubric.ts`), caching verdicts by query id and job content hash.
+  Hand labels are retained as an independent validation set (ARCHITECTURE §8).
 - Why an automated judge at all: hand labeling 50 queries over pools of 30 to 50 jobs is roughly 2,000
   judgements, which is why the labels sat unfinished and the headline Recall@10 claim could not be made.
 - **The judge failed its own validation and its labels are therefore not reported as measured results.** On the

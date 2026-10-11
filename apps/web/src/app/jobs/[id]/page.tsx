@@ -60,7 +60,7 @@ export default async function JobPage({ params }: { params: { id: string } }) {
       </div>
 
       <p className="text-xs text-stone-500">
-        This description is stored as plain text from the source API. The original posting is the authority.
+        Check the original posting for the latest details and application instructions.
       </p>
     </article>
   );

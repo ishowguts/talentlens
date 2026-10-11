@@ -37,7 +37,7 @@ export default function ScorePage() {
           ? caught.code === 'RATE_LIMITED'
             ? 'Only ten adverts a minute. Wait a moment and try again.'
             : caught.message
-          : 'The API could not be reached. Is it running on port 4000?',
+          : 'Advert scoring is temporarily unavailable. Please try again in a moment.',
       );
     } finally {
       setStatus('idle');
@@ -49,8 +49,8 @@ export default function ScorePage() {
       <section className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight">Score a job advert</h1>
         <p className="text-stone-600">
-          Seven rules, each worth a fixed number of points. The score is the same every time for the same
-          advert; only the title rewrite and the notes come from a model.
+          Check your advert for clarity, useful details, and wording that may put candidates off. The score
+          uses seven fixed checks; writing suggestions are optional.
         </p>
       </section>
 
@@ -206,8 +206,7 @@ export default function ScorePage() {
 
           {result.rewrittenTitle === null && (
             <p className="text-xs text-stone-500">
-              No written suggestions: the model was unavailable or its answer was rejected. The score above
-              does not depend on it.
+              Writing suggestions are temporarily unavailable. All seven scoring checks are complete.
             </p>
           )}
         </section>

@@ -23,12 +23,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className="min-h-dvh">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:block focus:p-3">
+          Skip to content
+        </a>
         <header className="border-b border-stone-200 bg-white">
-          <div className="mx-auto flex max-w-5xl items-center gap-6 px-4 py-3">
+          <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
             <Link href="/" className="font-semibold tracking-tight">
               TalentLens
             </Link>
-            <nav className="flex gap-4 text-sm text-stone-600">
+            <nav aria-label="Main navigation" className="flex flex-wrap gap-4 text-sm text-stone-600">
               {NAV.map((item) => (
                 <Link key={item.href} href={item.href} className="hover:text-stone-900">
                   {item.label}
@@ -37,9 +40,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </nav>
           </div>
         </header>
-        <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
+        <main id="main-content" tabIndex={-1} className="mx-auto max-w-5xl px-4 py-8">
+          {children}
+        </main>
         <footer className="mx-auto max-w-5xl px-4 pb-10 text-xs text-stone-500">
-          Job data from the Remotive and Adzuna public APIs. Every result links to the original posting.
+          Jobs from Remotive and Adzuna. Check the original posting for availability.
         </footer>
       </body>
     </html>

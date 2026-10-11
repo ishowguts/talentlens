@@ -13,7 +13,7 @@ export default function MatchPage() {
       <section className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight">Match a resume to jobs</h1>
         <p className="text-stone-600">
-          The resume is embedded, compared against every posting, and the top 20 are then ranked for fit.
+          Find roles that fit your experience and see which requested skills are missing from your resume.
         </p>
       </section>
 
@@ -25,7 +25,7 @@ export default function MatchPage() {
             <h2 className="text-lg font-medium">{response.matches.length} matches</h2>
             {!response.reranked && (
               <p className="rounded-md bg-stone-100 px-2 py-1 text-xs text-stone-600">
-                Ranked by similarity only: the explanation model was unavailable or its answer was rejected.
+                Ranked by similarity. Detailed fit explanations are temporarily unavailable.
               </p>
             )}
           </div>
@@ -37,8 +37,8 @@ export default function MatchPage() {
           </ul>
 
           <p className="text-xs text-stone-500">
-            Nothing from the resume is stored beyond its text and vector, which are reused if the same resume
-            is uploaded again.
+            Your resume text, its numerical representation, and match results are stored so repeat uploads can
+            reuse earlier results.
           </p>
         </section>
       )}

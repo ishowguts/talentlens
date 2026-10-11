@@ -9,9 +9,9 @@ export interface SearchFormValues {
 }
 
 const MODE_HINT: Record<SearchMode, string> = {
-  hybrid: 'Keyword and meaning, fused by rank',
-  vector: 'Meaning only, from embeddings',
-  keyword: 'Words in the advert only',
+  hybrid: 'Match your keywords and related experience',
+  vector: 'Find related roles even when the wording differs',
+  keyword: 'Match words in the job advert',
 };
 
 /** A plain GET form: the URL holds the whole query, so results are shareable and need no client state. */
@@ -23,7 +23,7 @@ export function SearchForm({ values }: { values: SearchFormValues }) {
           type="search"
           name="q"
           defaultValue={values.q}
-          placeholder="frontend role that pays well, remote"
+          placeholder="Job title, skill, or type of work"
           aria-label="Search jobs"
           maxLength={200}
           className="flex-1 rounded-md border border-stone-300 px-3 py-2 outline-none focus:border-stone-500"

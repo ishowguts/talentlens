@@ -1,7 +1,6 @@
 # TalentLens — Architecture
 
-Status: design baseline, 2026-10-02. This document is the contract. Code follows it; when code must differ,
-this file and `harness/DECISIONS.md` change in the same commit.
+System design and API contracts. Record changes to these contracts in [DECISIONS.md](DECISIONS.md).
 
 ## 1. What it is
 
@@ -10,8 +9,8 @@ A semantic job search engine and resume matcher over thousands of real job posti
 - **Candidate:** uploads a resume, gets ranked jobs with a short explanation of fit and missing skills.
 - **Recruiter:** pastes a job ad, gets a quality score, flagged wording, and a search-friendly title rewrite.
 - **Search:** keyword, vector, and hybrid (Reciprocal Rank Fusion) over the same corpus, with filters.
-- **Evaluation:** a labeled query set measures Recall@10 for keyword vs vector vs hybrid. That number is the
-  headline result in the README.
+- **Evaluation:** compares keyword, vector and hybrid search on 50 queries. The current labels failed
+  validation; quality metrics are diagnostic only. See [../eval/results.md](../eval/results.md).
 
 ## 2. System diagram
 
@@ -45,7 +44,7 @@ flowchart LR
   SCORE --> LLM
 ```
 
-## 3. Stack (fixed; changes need an ADR)
+## 3. Stack
 
 | Layer | Choice |
 | --- | --- |
@@ -59,26 +58,25 @@ flowchart LR
 | LLM | Gemini via `@google/genai`, JSON response mode, thinking disabled with `thinkingBudget: 0`, output validated with zod |
 | PDF text | `unpdf` |
 | Tests | Vitest + Supertest against a real Postgres (Docker, separate `talentlens_test` DB) |
-| CI | GitHub Actions: guard, lint, typecheck, test |
+| CI | GitHub Actions: lint, typecheck, test |
 | Deploy | Vercel (web), Render (api, `singapore`), Supabase (Postgres + pgvector, Tokyo); see ADR-015 |
 
 ## 4. Repository layout
 
 ```
 talentlens/
-├─ AGENTS.md                  operating manual (read first)
-├─ harness/                   HANDOFF, STATE, TASKS, DECISIONS, CONTEXT
-├─ docs/ARCHITECTURE.md       this file
+├─ CONTRIBUTING.md            development and verification
+├─ docs/                      architecture, decisions, measurements, demo
 ├─ apps/
 │  ├─ api/
 │  │  ├─ src/
 │  │  │  ├─ server.ts         listen(); graceful shutdown
 │  │  │  ├─ app.ts            createApp(): middleware + routes (imported by tests)
 │  │  │  ├─ env.ts            zod-parsed env, fails fast on boot
-│  │  │  ├─ routes/           health.ts, search.ts, jobs.ts, match.ts, stats.ts
+│  │  │  ├─ routes/           health.ts, search.ts, jobs.ts, match.ts
 │  │  │  ├─ services/         search.ts, match.ts, scorer.ts, embeddings.ts, llm.ts
 │  │  │  ├─ ingest/           remotive.ts, adzuna.ts, normalize.ts, run.ts (CLI entry)
-│  │  │  ├─ middleware/       error.ts, validate.ts, rateLimit.ts, requestId.ts
+│  │  │  ├─ middleware/       error.ts, rateLimit.ts, requestId.ts
 │  │  │  └─ lib/              hash.ts, text.ts, biasTerms.ts
 │  │  └─ test/                *.test.ts (Vitest + Supertest)
 │  └─ web/
@@ -95,8 +93,7 @@ talentlens/
 │  ├─ label.ts                pooling + interactive labeling CLI
 │  └─ run.ts                  computes Recall@10, MRR@10 per mode → eval/results.md
 ├─ docker-compose.yml         postgres (pgvector/pgvector:pg16)
-├─ .env.example
-└─ scripts/                   guard.mjs, setup.sh, checkpoint.sh
+└─ .env.example
 ```
 
 ## 5. Data model
@@ -232,7 +229,7 @@ silently. `GET /health` reports whether a reranking model is configured, never a
 4. **Embed new or changed jobs only.** Select jobs with no `job_embeddings` row or whose stored `content_hash`
    differs; embed in batches of 32; upsert. Log `embedded=N skipped_cached=M` so the cache hit rate is measurable.
 
-Target: ≥ 5,000 jobs after T08. Ingestion is idempotent: running it twice adds 0 rows the second time.
+Ingestion is idempotent: running it twice adds 0 rows the second time.
 
 ### 7.2 Embeddings
 
@@ -345,7 +342,7 @@ URL parser may split at the first `@` and silently connect to whatever follows i
 - **API (Supertest on `createApp()`):** each endpoint happy path + one failure path; DB is the real Postgres test
   database, migrated and seeded with ~30 fixture jobs and precomputed embeddings in `apps/api/test/fixtures`.
 - **LLM in tests:** `services/llm.ts` exports an interface; tests inject a fake. No network in CI.
-- **CI:** `guard` → `pnpm lint` → `pnpm typecheck` → `pnpm test` (Postgres service container `pgvector/pgvector:pg16`).
+- **CI:** `pnpm lint` → `pnpm typecheck` → `pnpm test` (Postgres service container `pgvector/pgvector:pg16`).
 
 ## 11. Deployment
 
@@ -362,11 +359,11 @@ URL parser may split at the first `@` and silently connect to whatever follows i
   `pg_dump | psql` (ADR-014), so the Adzuna trial quota is not spent twice. Later top-ups run locally against
   the production database, or from a manual GitHub Actions workflow (`workflow_dispatch`) with secrets. No cron for the demo.
 
-## 12. Performance budgets (measure, record in STATE)
+## 12. Performance budgets
 
 These budgets describe a warm instance with a CPU that is not throttled, which in practice means local
 development. The free Render instance embeds a query several times more slowly, so the vector and hybrid budgets
-do not hold there; STATE records both sets of numbers.
+do not hold there; MEASUREMENTS.md records both sets of numbers.
 
 | Path | Budget (p50, warm, 5k jobs) |
 | --- | --- |

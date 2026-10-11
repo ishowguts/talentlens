@@ -31,7 +31,7 @@ export function ResumeUpload({ onMatched }: { onMatched: (response: MatchRespons
             ? caught.code === 'RATE_LIMITED'
               ? 'Only five resumes a minute. Wait a moment and try again.'
               : caught.message
-            : 'The API could not be reached. Is it running on port 4000?',
+            : 'Resume matching is temporarily unavailable. Please try again in a moment.',
       });
     }
   }
@@ -126,7 +126,7 @@ export function ResumeUpload({ onMatched }: { onMatched: (response: MatchRespons
 
       {loading && (
         <p role="status" className="text-sm text-stone-600">
-          Reading the resume, embedding it and ranking jobs. The first run can take a few seconds.
+          Finding jobs that match your experience. This may take a few seconds.
         </p>
       )}
 
